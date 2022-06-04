@@ -15,11 +15,11 @@ internally for our events there's no user interface planned or necessary.
 
 **Administrative commands**
 
-``//lv9start``
+``//lvl9start``
     | *Admin Level 1*
     | Initializes and starts a new LEVEL9 tournament sequence.
 
-``//lv9clear``
+``//lvl9clear``
     | *Admin Level 1*
     | Ends an active LEVEL9 tournament sequence.
 
@@ -35,7 +35,7 @@ internally for our events there's no user interface planned or necessary.
 
 **Player commands**
 
-``/lv9rank``
+``/lvl9rank``
     | *No permissions needed*
     | Writes extended ranking information of the user into his personal chat.
 
