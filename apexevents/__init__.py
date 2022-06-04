@@ -31,10 +31,14 @@ class ApexEvents(AppConfig):
     
         await self.instance.command_manager.register(
             Command(command='lvl9start', target=self.level9_start, perms='apexevents:manage_event', admin=True,
-                    description='Starts the AutoMod-Tool'),
+                    description='Starts the AutoMod-Tool for LEVEL9 events'),
             Command(command='lvl9clear', target=self.level9_clear, perms='apexevents:manage_event', admin=True,
-                    description='Resets the AutoMod-Tool'),
+                    description='Resets the AutoMod-Tool for LEVEL9 events'),
             Command(command='lvl9rank', aliases=['lvl9'], target=self.level9_rank, description='Shows current ranking information.'),
+            Command(command='summitstart', target=self.summit_start, perms='apexevents:manage_event', admin=True,
+                    description='Starts the AutoMod-Tool for THE SUMMIT'),
+            Command(command='summitclear', target=self.summit_clear, perms='apexevents:manage_event', admin=True,
+                    description='Resets the AutoMod-Tool for THE SUMMIT'),
             Command(command='rulebook', target=self.rules, description='Shows link to the rules for the current tournament.'),
             Command(command='apexevents', target=self.apexevents_info),
             Command(command='aedebug', target=self.debug, perms='apexevents:dev', admin=True)
@@ -52,6 +56,13 @@ class ApexEvents(AppConfig):
             self.map_times.clear()
             self.tournament_times.clear()
             self.tournament_dnf = 0
+
+    async def summit_start(self, player, data, **kwargs):
+        if self.tournament == '':
+            await self.instance.chat('$s$1EFAuto$FFFModerator: One tournament to rule them all...')
+            await self.instance.chat('$s$1EFAuto$FFFModerator: Get ready for... $16FTH$18FE S$1AFU$1BFM$1CFM$1DFI$1EFT')
+            self.tournament = 'summit'
+            self.current_map = 0
     
     async def level9_clear(self, player, data, **kwargs):
         if self.tournament == 'level9':
@@ -62,6 +73,12 @@ class ApexEvents(AppConfig):
             self.tournament_times.clear()
             self.tournament_dnf = 0
         
+            await self.instance.chat('$s$FB3Auto$FFFModerator: Tournament successfully cleared!', player)
+
+    async def summit_clear(self, player, data, **kwargs):
+        if self.tournament == 'summit':
+            self.tournament = ''
+            self.current_map = 0
             await self.instance.chat('$s$FB3Auto$FFFModerator: Tournament successfully cleared!', player)
 
     async def level9_rank(self, player, data, **kwargs):
@@ -133,15 +150,21 @@ class ApexEvents(AppConfig):
     async def apexevents_info(self, player, data, **kwargs):
         await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS $FFFManaging System v$FF00.2.0', player)
 
-        await self.instance.chat('$s$1EF/lvl9rank$FFF: $iGet your current ranking information.', player)
+        if self.tournament == 'level9':
+            await self.instance.chat('$s$1EF/lvl9rank$FFF: $iGet your current ranking information.', player)
+
         await self.instance.chat('$s$1EF/rulebook: $iGet some information about the rules of the current tournament.', player)
 
         if player.level > 0:
-            await self.instance.chat('$s$1EF//lvl9start$FFF: $iSetup a new AutoModerator for a LEVEL9 event.', player)
+            if self.tournament == '':
+                await self.instance.chat('$s$1EF//lvl9start$FFF: $iSetup a new AutoModerator for a LEVEL9 event.', player)
+                await self.instance.chat('$s$1EF//summitstart$FFF: $iSetup a new AutoModerator for THE SUMMIT.', player)
+
             await self.instance.chat('$s$1EF//lvl9clear$FFF: $iClear an ongoing LEVEL9 event.', player)
+            await self.instance.chat('$s$1EF//summitclear$FFF: $iClear an ongoing SUMMIT event.', player)
    
     async def map_begin(self, map, **kwargs):
-        time.sleep(4.5)
+        time.sleep(5)
         if self.tournament == 'level9' and self.current_map < 9:
             self.current_map += 1
             await self.instance.chat('$s$FFFMap {}/9: {}'.format(self.current_map, map.name))
