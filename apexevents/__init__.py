@@ -54,15 +54,21 @@ class ApexEvents(AppConfig):
     async def level9_start(self, player, data, **kwargs):
         if self.tournament == '':
             self.tournament = 'level9'
-            self.current_map = 0
+            self.admin = player
             self.map_times.clear()
             self.tournament_times.clear()
             self.tournament_dnf = 0
 
-            await self.instance.command_manager.execute(player, '//mode', 'ta')
-            await self.instance.command_manager.execute(player, '//modesettings', 'S_TimeLimit', str(540))
+            current_script = (await self.instance.mode_manager.get_current_script()).lower()
+            if 'timeattack' in current_script:
+                self.current_map = 0
+                await self.instance.command_manager.execute(player, '//modesettings', 'S_TimeLimit', str(540))
+            else:
+                self.current_map = -1
+                await self.instance.command_manager.execute(player, '//mode', 'ta')
+
             await self.instance.command_manager.execute(player, '//modesettings', 'S_ChatTime', str(20))
-            await self.instance.chat('$s$FB3Auto$FFFModerator: Good Evening and welcome to another $FB3LEVEL9 $FFFtournament! GLHF!')
+            await self.instance.command_manager.execute(player, '//modesettings', 'S_WarmUpNb', str(0))
 
     async def summit_start(self, player, data, **kwargs):
         if self.tournament == '':
@@ -70,7 +76,16 @@ class ApexEvents(AppConfig):
             self.admin = player
             self.current_map = -1
 
-            await self.instance.command_manager.execute(player, '//mode', 'rounds')
+            current_script = (await self.instance.mode_manager.get_current_script()).lower()
+            if 'rounds' in current_script:
+                self.current_map = 0
+                await self.instance.command_manager.execute(player, '//modesettings', 'S_PointsLimit', str(115))
+                await self.instance.command_manager.execute(player, '//modesettings', 'S_FinishTimeout', str(15))
+            else:
+                self.current_map = -1
+                await self.instance.command_manager.execute(player, '//mode', 'rounds')
+
+            await self.instance.command_manager.execute(player, '//modesettings', 'S_ChatTime', str(25))
             await self.instance.command_manager.execute(player, '//modesettings', 'S_WarmUpNb', str(2))
             await self.instance.command_manager.execute(player, '//pointsrepartition', str(28), str(24), str(20), str(17),
                                                         str(14), str(12), str(10), str(9), str(8), str(7), str(6), str(5),
@@ -179,34 +194,45 @@ class ApexEvents(AppConfig):
    
     async def map_begin(self, map, **kwargs):
         time.sleep(5)
-        if self.tournament == 'level9' and self.current_map < 9:
+
+        if self.tournament == 'level9':
             self.current_map += 1
-            await self.instance.chat('$s$FFFMap {}/9: {}'.format(self.current_map, map.name))
 
-            all_online = self.instance.player_manager.online
+            if self.current_map == 0:
+                await self.instance.command_manager.execute(self.admin, '//modesettings', 'S_TimeLimit', str(540))
+                await self.instance.command_manager.execute(self.admin, '//restart')
+            elif self.current_map > 0 and self.current_map < 9:
+                if self.current_map == 1:
+                    await self.instance.chat('$s$FB3Auto$FFFModerator: Good Evening and welcome to another $FB3LEVEL9 $FFFtournament! GLHF!')
+
+                await self.instance.chat('$s$FFFMap {}/9: {}'.format(self.current_map, map.name))
+
+                all_online = self.instance.player_manager.online
             
-            for player in all_online:
-                self.map_times[player.nickname] = 0
+                for player in all_online:
+                    self.map_times[player.nickname] = 0
 
-                if player.nickname in self.tournament_pos.values():
-                    player_pos = list(self.tournament_pos.keys())[list(self.tournament_pos.values()).index(player.nickname)]
-                    player_total = times.format_time(self.tournament_times[player.nickname])
+                    if player.nickname in self.tournament_pos.values():
+                        player_pos = list(self.tournament_pos.keys())[list(self.tournament_pos.values()).index(player.nickname)]
+                        player_total = times.format_time(self.tournament_times[player.nickname])
                     
-                    await self.instance.chat('$s$FFF Your current rank: $1EF{}. {}  $1EF{}'
-                                             .format(player_pos, player.nickname, player_total), player)
-        elif self.tournament == 'level9' and self.current_map == 9:
-            await self.show_results()
-            self.tournament = ''
+                        await self.instance.chat('$s$FFF Your current rank: $1EF{}. {}  $1EF{}'
+                                                 .format(player_pos, player.nickname, player_total), player)
+            elif self.current_map == 9:
+                await self.show_results()
+                self.tournament = ''
+
         elif self.tournament == 'summit':
             self.current_map += 1
 
             if self.current_map == 0:
                 await self.instance.command_manager.execute(self.admin, '//modesettings', 'S_PointsLimit', str(115))
                 await self.instance.command_manager.execute(self.admin, '//modesettings', 'S_FinishTimeout', str(15))
-                await self.instance.chat('$s$1EFAuto$FFFModerator: Get ready for... $16FTH$18FE S$1AFU$1BFM$1CFM$1DFI$1EFT')
-                time.sleep(3.5)
                 await self.instance.command_manager.execute(self.admin, '//restart')
             elif self.current_map > 0 and self.current_map < 4:
+                if self.current_map == 1:
+                    await self.instance.chat('$s$1EFAuto$FFFModerator: Get ready for... $16FTH$18FE S$1AFU$1BFM$1CFM$1DFI$1EFT')
+
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFPreliminary Round {}'.format(self.current_map))
             elif self.current_map == 4:
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFElimination Round 1')
