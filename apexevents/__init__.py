@@ -202,9 +202,8 @@ class ApexEvents(AppConfig):
             if self.current_map < 9:
                 if self.current_map == 0:
                     await self.instance.command_manager.execute(self.admin, '//modesettings', 'S_TimeLimit', str(540))
-                    await self.instance.command_manager.execute(self.admin, '//restart')
                     self.current_map += 1
-                    time.sleep(5)
+                    time.sleep(6)
 
                 if self.current_map == 1:
                     await self.instance.chat('$s$FB3Auto$FFFModerator: Good Evening and welcome to another $FB3LEVEL9 $FFFtournament! GLHF!')
@@ -229,15 +228,13 @@ class ApexEvents(AppConfig):
         elif self.tournament == 'summit':
             self.current_map += 1
 
-            if self.current_map == 0:
-                await self.instance.command_manager.execute(self.admin, '//modesettings', 'S_PointsLimit', str(115))
-                await self.instance.command_manager.execute(self.admin, '//modesettings', 'S_FinishTimeout', str(15))
-                await self.instance.command_manager.execute(self.admin, '//restart')
-                self.current_map += 1
-                time.sleep(5)
-                await self.instance.chat('$s$1EFAuto$FFFModerator: Get ready for... $16FTH$18FE S$1AFU$1BFM$1CFM$1DFI$1EFT')
-                await self.instance.chat('$s$1EFTHE SUMMIT: $FFFPreliminary Round {}'.format(self.current_map))
-            elif self.current_map > 0 and self.current_map < 4:
+            if self.current_map < 4:
+                if self.current_map == 0:
+                    await self.instance.command_manager.execute(self.admin, '//modesettings', 'S_PointsLimit', str(115))
+                    await self.instance.command_manager.execute(self.admin, '//modesettings', 'S_FinishTimeout', str(15))
+                    self.current_map += 1
+                    time.sleep(6)
+
                 if self.current_map == 1:
                     await self.instance.chat('$s$1EFAuto$FFFModerator: Get ready for... $16FTH$18FE S$1AFU$1BFM$1CFM$1DFI$1EFT')
 
