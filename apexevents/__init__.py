@@ -26,7 +26,7 @@ class ApexEvents(AppConfig):
         self.tournament_dnf = 0
     
     async def on_start(self):
-        await self.instance.permission_manager.register('manage_event', 'Enables access to the AutoModerator configuration commands.', app=self, min_level=1)
+        await self.instance.permission_manager.register('manage_event', 'Enables access to the AutoModerator configuration commands.', app=self, min_level=2)
         await self.instance.permission_manager.register('dev', 'Enables access to developer commands.', app=self, min_level=3)
     
         await self.instance.command_manager.register(
@@ -168,7 +168,7 @@ class ApexEvents(AppConfig):
 
         await self.instance.chat('$s$1EF/rulebook: $iGet some information about the rules of the current tournament.', player)
 
-        if player.level > 0:
+        if player.level > 1:
             if self.tournament == '':
                 await self.instance.chat('$s$1EF//lvl9start$FFF: $iSetup a new AutoModerator for a LEVEL9 event.', player)
                 await self.instance.chat('$s$1EF//summitstart$FFF: $iSetup a new AutoModerator for THE SUMMIT.', player)
