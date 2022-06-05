@@ -171,7 +171,7 @@ class ApexEvents(AppConfig):
         if self.tournament == 'level9':
             await self.instance.chat('$s$1EF/lvl9rank$FFF: $iGet your current ranking information.', player)
 
-        await self.instance.chat('$s$1EF/rulebook: $iGet some information about the rules of the current tournament.', player)
+        await self.instance.chat('$s$1EF/rulebook$FFF: $iGet some information about the rules of the current tournament.', player)
 
         if player.level > 1:
             if self.tournament == '':
@@ -203,6 +203,17 @@ class ApexEvents(AppConfig):
             self.tournament = ''
         elif self.tournament == 'summit':
             self.current_map += 1
+
+            if self.current_map < 4:
+                await self.instance.chat('$s$1EFTHE SUMMIT: $FFFPreliminary Round {}'.format(self.current_map))
+            elif self.current_map == 4:
+                await self.instance.chat('$s$1EFTHE SUMMIT: $FFFElimination Round 1')
+            elif self.current_map == 5:
+                await self.instance.chat('$s$1EFTHE SUMMIT: $FFFElimination Round 2')
+            elif self.current_map == 6:
+                await self.instance.chat('$s$1EFTHE SUMMIT: $FFFSemi-Final')
+            elif self.current_map == 7:
+                await self.instance.chat('$s$1EFTHE SUMMIT: $FFFFinal')
     
     async def map_end(self, map, **kwargs):
         if self.tournament == 'level9' and self.current_map > 0:
