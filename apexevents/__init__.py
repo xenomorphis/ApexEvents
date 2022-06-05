@@ -17,10 +17,12 @@ class ApexEvents(AppConfig):
         super().__init__(*args, **kwargs)
         
         self.lock = asyncio.Lock()
-        
+
+        self.admin = None
         self.tournament = ''
         self.current_map = 0
         self.map_times = dict()
+        self.tournament_players = list()
         self.tournament_pos = dict()
         self.tournament_times = dict()
         self.tournament_dnf = 0
@@ -47,6 +49,7 @@ class ApexEvents(AppConfig):
         self.context.signals.listen(mp_signals.map.map_begin, self.map_begin)
         self.context.signals.listen(mp_signals.map.map_end, self.map_end)
         self.context.signals.listen(tm_signals.finish, self.player_finish)   #oder mal tm_signals.scores probieren
+        self.context.signals.listen(tm_signals.warmup_end, self.warmup_end)
 
     async def level9_start(self, player, data, **kwargs):
         if self.tournament == '':
@@ -66,6 +69,7 @@ class ApexEvents(AppConfig):
             await self.instance.chat('$s$1EFAuto$FFFModerator: One tournament to rule them all...')
             await self.instance.chat('$s$1EFAuto$FFFModerator: Get ready for... $16FTH$18FE S$1AFU$1BFM$1CFM$1DFI$1EFT')
             self.tournament = 'summit'
+            self.admin = player
             self.current_map = 0
 
             await self.instance.command_manager.execute(player, '//mode', 'rounds')
@@ -91,6 +95,7 @@ class ApexEvents(AppConfig):
     async def summit_clear(self, player, data, **kwargs):
         if self.tournament == 'summit':
             self.tournament = ''
+            self.admin = None
             self.current_map = 0
             await self.instance.chat('$s$FB3Auto$FFFModerator: Tournament successfully cleared!', player)
 
@@ -225,6 +230,11 @@ class ApexEvents(AppConfig):
             async with self.lock:
                 if (player.nickname not in self.map_times) or (self.map_times[player.nickname] == 0) or (lap_time < self.map_times[player.nickname]):
                     self.map_times[player.nickname] = lap_time
+
+    async def warmup_end(self):
+        if self.tournament == 'summit' and self.current_map == 1:
+            await self.instance.command_manager.execute(self.admin, '//srvpass', 'awas')
+            self.tournament_players = self.instance.player_manager.online_logins
 
     async def debug(self, player, data, **kwargs):
         await self.instance.chat('$FFFCurrent ranking: $F00{}'.format(str(self.tournament_pos)), player)
