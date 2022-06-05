@@ -20,7 +20,7 @@ class ApexEvents(AppConfig):
 
         self.admin = None
         self.tournament = ''
-        self.current_map = 0
+        self.current_map = -1
         self.map_times = dict()
         self.tournament_players = list()
         self.tournament_pos = dict()
@@ -74,7 +74,7 @@ class ApexEvents(AppConfig):
         if self.tournament == '':
             self.tournament = 'summit'
             self.admin = player
-            self.current_map = -1
+            self.tournament_players.clear()
 
             current_script = (await self.instance.mode_manager.get_current_script()).lower()
             if 'rounds' in current_script:
@@ -96,7 +96,7 @@ class ApexEvents(AppConfig):
         if self.tournament == 'level9':
             self.tournament = ''
         
-            self.current_map = 0
+            self.current_map = -1
             self.map_times.clear()
             self.tournament_times.clear()
             self.tournament_dnf = 0
@@ -107,7 +107,7 @@ class ApexEvents(AppConfig):
         if self.tournament == 'summit':
             self.tournament = ''
             self.admin = None
-            self.current_map = 0
+            self.current_map = -1
             await self.instance.chat('$s$FB3Auto$FFFModerator: Tournament successfully cleared!', player)
 
     async def level9_rank(self, player, data, **kwargs):
@@ -193,7 +193,8 @@ class ApexEvents(AppConfig):
             await self.instance.chat('$s$1EF//summitclear$FFF: $iClear an ongoing SUMMIT event.', player)
    
     async def map_begin(self, map, **kwargs):
-        time.sleep(5)
+        if self.current_map > -1:
+            time.sleep(5)
 
         if self.tournament == 'level9':
             self.current_map += 1
