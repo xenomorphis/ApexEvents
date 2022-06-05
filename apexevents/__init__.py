@@ -66,16 +66,12 @@ class ApexEvents(AppConfig):
 
     async def summit_start(self, player, data, **kwargs):
         if self.tournament == '':
-            await self.instance.chat('$s$1EFAuto$FFFModerator: One tournament to rule them all...')
-            await self.instance.chat('$s$1EFAuto$FFFModerator: Get ready for... $16FTH$18FE S$1AFU$1BFM$1CFM$1DFI$1EFT')
             self.tournament = 'summit'
             self.admin = player
-            self.current_map = 0
+            self.current_map = -1
 
             await self.instance.command_manager.execute(player, '//mode', 'rounds')
             await self.instance.command_manager.execute(player, '//modesettings', 'S_WarmUpNb', str(2))
-            await self.instance.command_manager.execute(player, '//modesettings', 'S_PointsLimit', str(115))
-            await self.instance.command_manager.execute(player, '//modesettings', 'S_FinishTimeout', str(15))
             await self.instance.command_manager.execute(player, '//pointsrepartition', str(28), str(24), str(20), str(17),
                                                         str(14), str(12), str(10), str(9), str(8), str(7), str(6), str(5),
                                                         str(4), str(3), str(2), str(1), str(0), str(0), str(0), str(0),
@@ -204,7 +200,13 @@ class ApexEvents(AppConfig):
         elif self.tournament == 'summit':
             self.current_map += 1
 
-            if self.current_map < 4:
+            if self.current_map == 0:
+                await self.instance.command_manager.execute(self.admin, '//modesettings', 'S_PointsLimit', str(115))
+                await self.instance.command_manager.execute(self.admin, '//modesettings', 'S_FinishTimeout', str(15))
+                await self.instance.chat('$s$1EFAuto$FFFModerator: Get ready for... $16FTH$18FE S$1AFU$1BFM$1CFM$1DFI$1EFT')
+                time.sleep(3.5)
+                await self.instance.command_manager.execute(self.admin, '//restart')
+            elif self.current_map > 0 and self.current_map < 4:
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFPreliminary Round {}'.format(self.current_map))
             elif self.current_map == 4:
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFElimination Round 1')
