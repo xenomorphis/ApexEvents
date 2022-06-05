@@ -53,7 +53,6 @@ class ApexEvents(AppConfig):
 
     async def level9_start(self, player, data, **kwargs):
         if self.tournament == '':
-            await self.instance.chat('$s$FB3Auto$FFFModerator: Good Evening and welcome to another $FB3LEVEL9 $FFFtournament! GLHF!')
             self.tournament = 'level9'
             self.current_map = 0
             self.map_times.clear()
@@ -63,6 +62,7 @@ class ApexEvents(AppConfig):
             await self.instance.command_manager.execute(player, '//mode', 'ta')
             await self.instance.command_manager.execute(player, '//modesettings', 'S_TimeLimit', str(540))
             await self.instance.command_manager.execute(player, '//modesettings', 'S_ChatTime', str(20))
+            await self.instance.chat('$s$FB3Auto$FFFModerator: Good Evening and welcome to another $FB3LEVEL9 $FFFtournament! GLHF!')
 
     async def summit_start(self, player, data, **kwargs):
         if self.tournament == '':
