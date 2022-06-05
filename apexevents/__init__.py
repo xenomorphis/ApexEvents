@@ -57,12 +57,25 @@ class ApexEvents(AppConfig):
             self.tournament_times.clear()
             self.tournament_dnf = 0
 
+            await self.instance.command_manager.execute(player, '//mode', 'ta')
+            await self.instance.command_manager.execute(player, '//modesettings', 'S_TimeLimit', str(540))
+            await self.instance.command_manager.execute(player, '//modesettings', 'S_ChatTime', str(20))
+
     async def summit_start(self, player, data, **kwargs):
         if self.tournament == '':
             await self.instance.chat('$s$1EFAuto$FFFModerator: One tournament to rule them all...')
             await self.instance.chat('$s$1EFAuto$FFFModerator: Get ready for... $16FTH$18FE S$1AFU$1BFM$1CFM$1DFI$1EFT')
             self.tournament = 'summit'
             self.current_map = 0
+
+            await self.instance.command_manager.execute(player, '//mode', 'rounds')
+            await self.instance.command_manager.execute(player, '//modesettings', 'S_WarmUpNb', str(2))
+            await self.instance.command_manager.execute(player, '//modesettings', 'S_PointsLimit', str(115))
+            await self.instance.command_manager.execute(player, '//modesettings', 'S_FinishTimeout', str(15))
+            await self.instance.command_manager.execute(player, '//pointsrepartition', str(28), str(24), str(20), str(17),
+                                                        str(14), str(12), str(10), str(9), str(8), str(7), str(6), str(5),
+                                                        str(4), str(3), str(2), str(1), str(0), str(0), str(0), str(0),
+                                                        str(0), str(0), str(0), str(0), str(0))
     
     async def level9_clear(self, player, data, **kwargs):
         if self.tournament == 'level9':
@@ -148,7 +161,7 @@ class ApexEvents(AppConfig):
                                      .format(url_block), player)
 
     async def apexevents_info(self, player, data, **kwargs):
-        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS $FFFManaging System v$FF00.2.0', player)
+        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS $FFFManaging System v$FF00.2.1', player)
 
         if self.tournament == 'level9':
             await self.instance.chat('$s$1EF/lvl9rank$FFF: $iGet your current ranking information.', player)
