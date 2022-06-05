@@ -196,6 +196,8 @@ class ApexEvents(AppConfig):
         elif self.tournament == 'level9' and self.current_map == 9:
             await self.show_results()
             self.tournament = ''
+        elif self.tournament == 'summit':
+            self.current_map += 1
     
     async def map_end(self, map, **kwargs):
         if self.tournament == 'level9' and self.current_map > 0:
