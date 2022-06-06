@@ -47,6 +47,7 @@ class ApexEvents(AppConfig):
         )
         
         self.context.signals.listen(mp_signals.map.map_begin, self.map_begin)
+        self.context.signals.listen(mp_signals.flow.podium_start, self.podium_start)
         self.context.signals.listen(mp_signals.map.map_end, self.map_end)
         self.context.signals.listen(tm_signals.finish, self.player_finish)   #oder mal tm_signals.scores probieren
         self.context.signals.listen(tm_signals.warmup_end, self.warmup_end)
@@ -240,14 +241,22 @@ class ApexEvents(AppConfig):
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFSemi-Final')
             elif self.current_map == 7:
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFFinal')
+
+    async def podium_start(self, *args, **kwargs):
+        if self.tournament == 'level9':
+            if self.current_map < 1:
+                time.sleep(5)
+                await self.instance.chat(
+                    '$s$FB3Auto$FFFModerator: Good Evening and welcome to another $FB3LEVEL9 $FFFtournament! GLHF!')
+
+        elif self.tournament == 'summit':
+            if self.current_map < 1:
+                time.sleep(5)
+                await self.instance.chat('$s$1EFAuto$FFFModerator: Get ready for... $16FTH$18FE S$1AFU$1BFM$1CFM$1DFI$1EFT')
     
     async def map_end(self, map, **kwargs):
         if self.tournament == 'level9':
-            if self.current_map < 1:
-                time.sleep(4)
-                await self.instance.chat(
-                    '$s$FB3Auto$FFFModerator: Good Evening and welcome to another $FB3LEVEL9 $FFFtournament! GLHF!')
-            elif self.current_map > 0:
+            if self.current_map > 0:
                 for player in self.map_times:
                     if self.map_times[player] == 0:
                         self.map_times[player] = map.time_author + 15000
@@ -265,11 +274,6 @@ class ApexEvents(AppConfig):
                 self.tournament_dnf += map.time_author + 15000
                 positions = sorted(self.tournament_times, key=self.tournament_times.get, reverse=False)
                 self.tournament_pos = {rank: key for rank, key in enumerate(positions, 1)}
-
-        elif self.tournament == 'summit':
-            if self.current_map < 1:
-                time.sleep(4)
-                await self.instance.chat('$s$1EFAuto$FFFModerator: Get ready for... $16FTH$18FE S$1AFU$1BFM$1CFM$1DFI$1EFT')
     
     async def player_finish(self, player, race_time, lap_time, lap_cps, race_cps, flow, raw, **kwargs):
         if self.tournament == 'level9' and self.current_map > 0:
