@@ -111,7 +111,6 @@ class ApexEvents(AppConfig):
             await self.instance.chat('$s$FB3Auto$FFFModerator: Tournament successfully cleared!', player)
 
     async def level9_rank(self, player, data, **kwargs):
-        # Gibt auf Anfrage die aktuelle Position des Spielers in der Turnierrangliste zurück.
         if player.nickname in self.tournament_pos.values():
             player_pos = list(self.tournament_pos.keys())[list(self.tournament_pos.values()).index(player.nickname)]
             player_total = self.tournament_times[player.nickname]
@@ -273,7 +272,6 @@ class ApexEvents(AppConfig):
                 await self.instance.chat('$s$1EFAuto$FFFModerator: Get ready for... $16FTH$18FE S$1AFU$1BFM$1CFM$1DFI$1EFT')
     
     async def player_finish(self, player, race_time, lap_time, lap_cps, race_cps, flow, raw, **kwargs):
-        # Weist der aktuellen Map die aktuelle Rundenzeit zu, falls bisherige Bestzeit 0 oder größer als die Rundenzeit.
         if self.tournament == 'level9' and self.current_map > 0:
             async with self.lock:
                 if (player.nickname not in self.map_times) or (self.map_times[player.nickname] == 0) or (lap_time < self.map_times[player.nickname]):
