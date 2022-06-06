@@ -205,9 +205,6 @@ class ApexEvents(AppConfig):
                     self.current_map += 1
                     time.sleep(6)
 
-                if self.current_map == 1:
-                    await self.instance.chat('$s$FB3Auto$FFFModerator: Good Evening and welcome to another $FB3LEVEL9 $FFFtournament! GLHF!')
-
                 await self.instance.chat('$s$FFFMap {}/9: {}'.format(self.current_map, map.name))
 
                 all_online = self.instance.player_manager.online
@@ -235,9 +232,6 @@ class ApexEvents(AppConfig):
                     self.current_map += 1
                     time.sleep(6)
 
-                if self.current_map == 1:
-                    await self.instance.chat('$s$1EFAuto$FFFModerator: Get ready for... $16FTH$18FE S$1AFU$1BFM$1CFM$1DFI$1EFT')
-
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFPreliminary Round {}'.format(self.current_map))
             elif self.current_map == 4:
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFElimination Round 1')
@@ -249,24 +243,34 @@ class ApexEvents(AppConfig):
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFFinal')
     
     async def map_end(self, map, **kwargs):
-        if self.tournament == 'level9' and self.current_map > 0:
-            for player in self.map_times:
-                if self.map_times[player] == 0:
-                    self.map_times[player] = map.time_author + 15000
+        if self.tournament == 'level9':
+            if self.current_map < 1:
+                time.sleep(4)
+                await self.instance.chat(
+                    '$s$FB3Auto$FFFModerator: Good Evening and welcome to another $FB3LEVEL9 $FFFtournament! GLHF!')
+            elif self.current_map > 0:
+                for player in self.map_times:
+                    if self.map_times[player] == 0:
+                        self.map_times[player] = map.time_author + 15000
 
-                if player in self.tournament_times:
-                    self.tournament_times[player] += self.map_times[player]         # Wenn der Spieler bereits eine Turniergesamtzeit besitzt, addiere die Map-Zeit auf
-                else:
-                    self.tournament_times[player] = self.tournament_dnf + self.map_times[player]     # Wenn der Spieler noch keine Turniergesamtzeit besitzt, nimm die bisherige DNF-Zeit und addiere die Map-Zeit auf
+                    if player in self.tournament_times:
+                        self.tournament_times[player] += self.map_times[player]         # Wenn der Spieler bereits eine Turniergesamtzeit besitzt, addiere die Map-Zeit auf
+                    else:
+                        self.tournament_times[player] = self.tournament_dnf + self.map_times[player]     # Wenn der Spieler noch keine Turniergesamtzeit besitzt, nimm die bisherige DNF-Zeit und addiere die Map-Zeit auf
 
-            for player in self.tournament_times:
-                if player not in self.map_times:
-                    self.tournament_times[player] += map.time_author + 15000
+                for player in self.tournament_times:
+                    if player not in self.map_times:
+                        self.tournament_times[player] += map.time_author + 15000
 
-            self.map_times.clear()
-            self.tournament_dnf += map.time_author + 15000
-            positions = sorted(self.tournament_times, key=self.tournament_times.get, reverse=False)
-            self.tournament_pos = {rank: key for rank, key in enumerate(positions, 1)}
+                self.map_times.clear()
+                self.tournament_dnf += map.time_author + 15000
+                positions = sorted(self.tournament_times, key=self.tournament_times.get, reverse=False)
+                self.tournament_pos = {rank: key for rank, key in enumerate(positions, 1)}
+
+        elif self.tournament == 'summit':
+            if self.current_map < 1:
+                time.sleep(4)
+                await self.instance.chat('$s$1EFAuto$FFFModerator: Get ready for... $16FTH$18FE S$1AFU$1BFM$1CFM$1DFI$1EFT')
     
     async def player_finish(self, player, race_time, lap_time, lap_cps, race_cps, flow, raw, **kwargs):
         # Weist der aktuellen Map die aktuelle Rundenzeit zu, falls bisherige Bestzeit 0 oder größer als die Rundenzeit.
