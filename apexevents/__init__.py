@@ -50,6 +50,7 @@ class ApexEvents(AppConfig):
         self.context.signals.listen(mp_signals.flow.podium_start, self.podium_start)
         self.context.signals.listen(mp_signals.map.map_end, self.map_end)
         self.context.signals.listen(tm_signals.finish, self.player_finish)   #oder mal tm_signals.scores probieren
+        self.context.signals.listen(tm_signals.scores, self.scores)
         self.context.signals.listen(tm_signals.warmup_end, self.warmup_end)
 
     async def level9_start(self, player, data, **kwargs):
@@ -280,6 +281,15 @@ class ApexEvents(AppConfig):
             async with self.lock:
                 if (player.nickname not in self.map_times) or (self.map_times[player.nickname] == 0) or (lap_time < self.map_times[player.nickname]):
                     self.map_times[player.nickname] = lap_time
+
+    async def scores(self, section, players, **kwargs):
+        if self.tournament == 'summit' and self.current_map > 0:
+            await self.instance.chat('$sScores || Section: {}'.format(section), self.admin)
+
+            for player in players:
+                if 'map_points' in player:
+                    await self.instance.chat('$sScores || Player: {}, Points: {}'
+                                             .format(player['player'].login, player['map_points']), self.admin)
 
     async def warmup_end(self):
         if self.tournament == 'summit' and self.current_map == 1:
