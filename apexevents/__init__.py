@@ -22,7 +22,8 @@ class ApexEvents(AppConfig):
         self.tournament = ''
         self.current_map = -1
         self.map_times = dict()
-        self.tournament_players = list()
+        self.tournament_players = dict()
+        self.tournament_players_amt = 0
         self.tournament_pos = dict()
         self.tournament_times = dict()
         self.tournament_dnf = 0
@@ -76,6 +77,7 @@ class ApexEvents(AppConfig):
         if self.tournament == '':
             self.tournament = 'summit'
             self.admin = player
+            self.tournament_players_amt = 0
             self.tournament_players.clear()
 
             current_script = (await self.instance.mode_manager.get_current_script()).lower()
@@ -110,6 +112,8 @@ class ApexEvents(AppConfig):
             self.tournament = ''
             self.admin = None
             self.current_map = -1
+            self.tournament_players_amt = 0
+            self.tournament_players.clear()
             await self.instance.chat('$s$FB3Auto$FFFModerator: Tournament successfully cleared!', player)
 
     async def level9_rank(self, player, data, **kwargs):
@@ -294,7 +298,11 @@ class ApexEvents(AppConfig):
     async def warmup_end(self):
         if self.tournament == 'summit' and self.current_map == 1:
             await self.instance.command_manager.execute(self.admin, '//srvpass', 'awas')
-            self.tournament_players = self.instance.player_manager.online_logins
+            self.tournament_players_amt = self.instance.player_manager.count_players
+            participants = self.instance.player_manager.online_logins
+
+            for player in participants:
+                self.tournament_players[player] = 0
 
     async def debug(self, player, data, **kwargs):
         await self.instance.chat('$FFFCurrent ranking: $F00{}'.format(str(self.tournament_pos)), player)
