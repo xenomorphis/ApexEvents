@@ -269,12 +269,12 @@ class ApexEvents(AppConfig):
                 await self.instance.chat('$s$1EFAuto$FFFModerator: Get ready for... $16FTH$18FE S$1AFU$1BFM$1CFM$1DFI$1EFT')
             elif self.current_map < 3:
                 time.sleep(5)
-                if len(self.tournament_pos) > 11:
+                if len(self.tournament_pos) > 12:
                     player_p12 = self.tournament_pos[12]
                     points_p12 = self.tournament_players[player_p12]
 
                 for player in self.tournament_players.keys():
-                    if len(self.tournament_pos) > 11:
+                    if len(self.tournament_pos) > 12:
                         diff_to_p12 = self.tournament_players[player] - points_p12
                         if diff_to_p12 > 0:
                             colorcode = '$3C0+'
