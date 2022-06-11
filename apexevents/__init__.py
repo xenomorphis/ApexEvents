@@ -237,7 +237,7 @@ class ApexEvents(AppConfig):
                     self.current_map += 1
                     time.sleep(6)
 
-                await self.instance.chat('$s$1EFTHE SUMMIT: $FFFPreliminary Round {}'.format(self.current_map))
+                await self.instance.chat('$s$1EFTHE SUMMIT: $FFFPreliminary Round {}/3'.format(self.current_map))
             elif self.current_map == 4:
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFElimination Round 1')
             elif self.current_map == 5:
@@ -258,7 +258,37 @@ class ApexEvents(AppConfig):
             if self.current_map < 1:
                 time.sleep(5)
                 await self.instance.chat('$s$1EFAuto$FFFModerator: Get ready for... $16FTH$18FE S$1AFU$1BFM$1CFM$1DFI$1EFT')
-    
+            elif self.current_map < 3:
+                time.sleep(5)
+                if len(self.tournament_pos) > 11:
+                    player_p12 = self.tournament_pos[12]
+                    points_p12 = self.tournament_players[player_p12]
+
+                for player in self.tournament_players.keys():
+                    if len(self.tournament_pos) > 11:
+                        diff_to_p12 = self.tournament_players[player] - points_p12
+                        if diff_to_p12 > 0:
+                            colorcode = '$3C0+'
+                        else:
+                            colorcode = '$F30'
+
+                        await self.instance.chat('$s$1EFPRELIMINARIES | $FFFYour total points: $FE0{} $FFF(Diff to P12: {}{}$FFF)'
+                            .format(str(self.tournament_players[player]), colorcode, str(diff_to_p12)), player)
+                    else:
+                        player_pos = list(self.tournament_pos.keys())[list(self.tournament_pos.values()).index(player)]
+                        await self.instance.chat('$s$1EFPRELIMINARIES | $FFFYour total points: $FE0{} $FFF(Pos $FE0{}$FFF)'
+                                             .format(str(self.tournament_players[player]), str(player_pos)), player)
+            elif self.current_map == 3:
+                time.sleep(7.5)
+                players_current = len(self.tournament_pos)
+                await self.instance.chat('$s$1EFPRELIMINARIES | $FFFDNQ\'ed players:')
+                for i in range(players_current, 13, -1):
+                    player_login_out = self.tournament_pos[i]
+                    player_out = self.instance.player_manager.get_player(player_login_out)
+                    await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_out.nickname))
+                    await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
+                    del self.tournament_players[player_login_out]
+
     async def map_end(self, map, **kwargs):
         if self.tournament == 'level9':
             if self.current_map > 0:
@@ -287,13 +317,23 @@ class ApexEvents(AppConfig):
                     self.map_times[player.nickname] = lap_time
 
     async def scores(self, section, players, **kwargs):
-        if self.tournament == 'summit' and self.current_map > 0:
-            await self.instance.chat('$sScores || Section: {}'.format(section), self.admin)
+        if self.tournament == 'summit':
+            if self.current_map > 0 and self.current_map < 4:
+                if section == 'EndMap':
+                    for player in players:
+                        if ('map_points' in player) and (player['player'].login in self.tournament_players):
+                            self.tournament_players[player['player'].login] += player['map_points']
 
-            for player in players:
-                if 'map_points' in player:
-                    await self.instance.chat('$sScores || Player: {}, Points: {}'
-                                             .format(player['player'].login, player['map_points']), self.admin)
+                    positions = sorted(self.tournament_players, key=self.tournament_players.get, reverse=True)
+                    self.tournament_pos = {rank: key for rank, key in enumerate(positions, 1)}
+            elif self.current_map > 3:
+                if section == 'EndMap':
+                    for player in players:
+                        if ('map_points' in player) and (player['player'].login in self.tournament_players):
+                            self.tournament_players[player['player'].login] = player['map_points']
+
+                    positions = sorted(self.tournament_players, key=self.tournament_players.get, reverse=True)
+                    self.tournament_pos = {rank: key for rank, key in enumerate(positions, 1)}
 
     async def warmup_end(self):
         if self.tournament == 'summit' and self.current_map == 1:
