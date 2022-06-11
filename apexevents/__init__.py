@@ -8,6 +8,7 @@ from pyplanet.utils import times
 from pyplanet.apps.core.trackmania import callbacks as tm_signals
 from pyplanet.apps.core.maniaplanet import callbacks as mp_signals
 
+
 class ApexEvents(AppConfig):
     name = 'pyplanet.apps.contrib.apexevents'
     game_dependencies = ['trackmania']
@@ -50,7 +51,7 @@ class ApexEvents(AppConfig):
         self.context.signals.listen(mp_signals.map.map_begin, self.map_begin)
         self.context.signals.listen(mp_signals.flow.podium_start, self.podium_start)
         self.context.signals.listen(mp_signals.map.map_end, self.map_end)
-        self.context.signals.listen(tm_signals.finish, self.player_finish)   #oder mal tm_signals.scores probieren
+        self.context.signals.listen(tm_signals.finish, self.player_finish)
         self.context.signals.listen(tm_signals.scores, self.scores)
         self.context.signals.listen(tm_signals.warmup_end, self.warmup_end)
 
@@ -128,8 +129,8 @@ class ApexEvents(AppConfig):
                 await self.instance.chat('$s$FFF Next rank ahead: $FE0{}. {}  $FE0-{}'
                                          .format((player_pos - 1), player_prev, times.format_time(time_diff)), player)
 
-            await self.instance.chat('$s$FFF Your current rank: $1EF{}. {}  $1EF{}'.format(player_pos, player.nickname,
-                                             times.format_time(self.tournament_times[player.nickname])), player)
+            await self.instance.chat('$s$FFF Your current rank: $1EF{}. {}  $1EF{}'
+                                     .format(player_pos, player.nickname, times.format_time(self.tournament_times[player.nickname])), player)
             
             if player_pos < len(self.tournament_pos):
                 player_next = self.tournament_pos[player_pos + 1]
@@ -273,11 +274,11 @@ class ApexEvents(AppConfig):
                             colorcode = '$F30'
 
                         await self.instance.chat('$s$1EFPRELIMINARIES | $FFFYour total points: $FE0{} $FFF(Diff to P12: {}{}$FFF)'
-                            .format(str(self.tournament_players[player]), colorcode, str(diff_to_p12)), player)
+                                                 .format(str(self.tournament_players[player]), colorcode, str(diff_to_p12)), player)
                     else:
                         player_pos = list(self.tournament_pos.keys())[list(self.tournament_pos.values()).index(player)]
                         await self.instance.chat('$s$1EFPRELIMINARIES | $FFFYour total points: $FE0{} $FFF(Pos $FE0{}$FFF)'
-                                             .format(str(self.tournament_players[player]), str(player_pos)), player)
+                                                 .format(str(self.tournament_players[player]), str(player_pos)), player)
             elif self.current_map == 3:
                 time.sleep(7.5)
                 players_current = len(self.tournament_pos)
@@ -318,7 +319,7 @@ class ApexEvents(AppConfig):
 
     async def scores(self, section, players, **kwargs):
         if self.tournament == 'summit':
-            if self.current_map > 0 and self.current_map < 4:
+            if 0 < self.current_map < 4:
                 if section == 'EndMap':
                     for player in players:
                         if ('map_points' in player) and (player['player'].login in self.tournament_players):
