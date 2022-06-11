@@ -2,7 +2,7 @@
 ApexEvents
 ==========
 :Developer: apex/xenomorphis
-:Version: 0.3.0
+:Version: 0.3.1
 
 ApexEvents is a plugin for `PyPlanet <https://pypla.net/en/latest/index.html>`_ and provides a management toolbox for the
 Trackmania 2 events hosted by Team APEX.
@@ -54,12 +54,3 @@ internally for our events there's no user interface planned or necessary.
 ``/apexevents``
     | *No permissions needed*
     | Writes the version number and all available commands into the ingame chat.
-
-
-Roadmap
--------
-A non-comprehensive list of enhancements planned for future releases. As this is a spare-time project there's no
-guarantee that the features listet here will be actually developed. So take it as a collection of ideas how this module could
-be improved beyond it's basic functionalities.
-
-* Add support for THE SUMMIT
