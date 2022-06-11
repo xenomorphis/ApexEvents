@@ -290,13 +290,14 @@ class ApexEvents(AppConfig):
             elif self.current_map == 3:
                 time.sleep(7.5)
                 players_current = len(self.tournament_pos)
-                await self.instance.chat('$s$1EFPRELIMINARIES | $FFFDNQ\'ed players:')
-                for i in range(players_current, 13, -1):
-                    player_login_out = self.tournament_pos[i]
-                    player_out = self.instance.player_manager.get_player(player_login_out)
-                    await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_out.nickname))
-                    await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
-                    del self.tournament_players[player_login_out]
+                if players_current > 12:
+                    await self.instance.chat('$s$1EFPRELIMINARIES | $FFFDNQ\'ed players:')
+                    for i in range(players_current, 13, -1):
+                        player_login_out = self.tournament_pos[i]
+                        player_out = self.instance.player_manager.get_player(player_login_out)
+                        await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_out.nickname))
+                        await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
+                        del self.tournament_players[player_login_out]
 
     async def map_end(self, map, **kwargs):
         if self.tournament == 'level9':
