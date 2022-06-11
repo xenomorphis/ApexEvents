@@ -183,7 +183,7 @@ class ApexEvents(AppConfig):
                                      .format(url_block), player)
 
     async def apexevents_info(self, player, data, **kwargs):
-        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS $FFFManaging System v$FF00.3.0', player)
+        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS $FFFManaging System v$FF00.3.1', player)
 
         if self.tournament == 'level9':
             await self.instance.chat('$s$1EF/lvl9rank$FFF: $iGet your current ranking information.', player)
@@ -239,12 +239,20 @@ class ApexEvents(AppConfig):
                     time.sleep(6)
 
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFPreliminary Round {}/3'.format(self.current_map))
+                if self.tournament_players_amt > 12:
+                    await self.instance.chat('$s$1EFQualification condition: $FFFBe upon the Top 12 players with the most total points after Map 3.')
             elif self.current_map == 4:
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFElimination Round 1')
+                if self.tournament_players_amt > 12:
+                    await self.instance.chat('$s$1EFEliminations: $FFFLast two players at the end of this map.')
             elif self.current_map == 5:
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFElimination Round 2')
+                if self.tournament_players_amt > 12:
+                    await self.instance.chat('$s$1EFEliminations: $FFFLast two players at the end of this map.')
             elif self.current_map == 6:
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFSemi-Final')
+                if self.tournament_players_amt > 12:
+                    await self.instance.chat('$s$1EFEliminations: $FFFLast player per run starting with the fourth run.')
             elif self.current_map == 7:
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFFinal')
 
