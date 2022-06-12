@@ -183,7 +183,7 @@ class ApexEvents(AppConfig):
                                      .format(url_block), player)
 
     async def apexevents_info(self, player, data, **kwargs):
-        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS $FFFManaging System v$FF00.3.1', player)
+        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS $FFFManaging System v$FF00.3.2', player)
 
         if self.tournament == 'level9':
             await self.instance.chat('$s$1EF/lvl9rank$FFF: $iGet your current ranking information.', player)
@@ -269,20 +269,25 @@ class ApexEvents(AppConfig):
                 await self.instance.chat('$s$1EFAuto$FFFModerator: Get ready for... $16FTH$18FE S$1AFU$1BFM$1CFM$1DFI$1EFT')
             elif self.current_map < 3:
                 time.sleep(5)
-                if len(self.tournament_pos) > 12:
-                    player_p12 = self.tournament_pos[12]
-                    points_p12 = self.tournament_players[player_p12]
+                if len(self.tournament_pos) > 17:
+                    player_ref = self.tournament_pos[14]
+                    points_ref = self.tournament_players[player_ref]
+                    position_ref = 14
+                elif len(self.tournament_pos) > 12:
+                    player_ref = self.tournament_pos[12]
+                    points_ref = self.tournament_players[player_ref]
+                    position_ref = 12
 
                 for player in self.tournament_players.keys():
                     if len(self.tournament_pos) > 12:
-                        diff_to_p12 = self.tournament_players[player] - points_p12
-                        if diff_to_p12 > 0:
+                        diff_to_q = self.tournament_players[player] - points_ref
+                        if diff_to_q > 0:
                             colorcode = '$3C0+'
                         else:
                             colorcode = '$F30'
 
-                        await self.instance.chat('$s$1EFPRELIMINARIES | $FFFYour total points: $FE0{} $FFF(Diff to P12: {}{}$FFF)'
-                                                 .format(str(self.tournament_players[player]), colorcode, str(diff_to_p12)), player)
+                        await self.instance.chat('$s$1EFPRELIMINARIES | $FFFYour total points: $FE0{} $FFF(Diff to P{}: {}{}$FFF)'
+                                                 .format(str(self.tournament_players[player]), str(position_ref), colorcode, str(diff_to_q)), player)
                     else:
                         player_pos = list(self.tournament_pos.keys())[list(self.tournament_pos.values()).index(player)]
                         await self.instance.chat('$s$1EFPRELIMINARIES | $FFFYour total points: $FE0{} $FFF(Pos $FE0{}$FFF)'
@@ -290,9 +295,47 @@ class ApexEvents(AppConfig):
             elif self.current_map == 3:
                 time.sleep(7.5)
                 players_current = len(self.tournament_pos)
-                if players_current > 12:
+                if players_current > 17:
+                    await self.instance.chat('$s$1EFPRELIMINARIES | $FFFDNQ\'ed players:')
+                    for i in range(players_current, 15, -1):
+                        player_login_out = self.tournament_pos[i]
+                        player_out = self.instance.player_manager.get_player(player_login_out)
+                        await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_out.nickname))
+                        await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
+                        del self.tournament_players[player_login_out]
+                elif players_current > 12:
                     await self.instance.chat('$s$1EFPRELIMINARIES | $FFFDNQ\'ed players:')
                     for i in range(players_current, 13, -1):
+                        player_login_out = self.tournament_pos[i]
+                        player_out = self.instance.player_manager.get_player(player_login_out)
+                        await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_out.nickname))
+                        await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
+                        del self.tournament_players[player_login_out]
+            elif self.current_map == 4:
+                time.sleep(7.5)
+                players_current = len(self.tournament_pos)
+                if players_current > 13:
+                    await self.instance.chat('$s$1EFELIMINATION 1 | $FFFDNQ\'ed players:')
+                    for i in range(players_current, 12, -1):
+                        player_login_out = self.tournament_pos[i]
+                        player_out = self.instance.player_manager.get_player(player_login_out)
+                        await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_out.nickname))
+                        await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
+                        del self.tournament_players[player_login_out]
+                elif players_current > 10:
+                    await self.instance.chat('$s$1EFELIMINATION 1 | $FFFDNQ\'ed players:')
+                    for i in range(players_current, 11, -1):
+                        player_login_out = self.tournament_pos[i]
+                        player_out = self.instance.player_manager.get_player(player_login_out)
+                        await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_out.nickname))
+                        await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
+                        del self.tournament_players[player_login_out]
+            elif self.current_map == 5:
+                time.sleep(7.5)
+                players_current = len(self.tournament_pos)
+                if players_current > 8:
+                    await self.instance.chat('$s$1EFELIMINATION 2 | $FFFDNQ\'ed players:')
+                    for i in range(players_current, 9, -1):
                         player_login_out = self.tournament_pos[i]
                         player_out = self.instance.player_manager.get_player(player_login_out)
                         await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_out.nickname))
