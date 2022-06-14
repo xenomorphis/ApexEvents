@@ -3,6 +3,7 @@ import time
 
 from pyplanet.apps.config import AppConfig
 from pyplanet.contrib.command import Command
+from pyplanet.contrib.setting import Setting
 from pyplanet.utils import times
 
 from pyplanet.apps.core.trackmania import callbacks as tm_signals
@@ -28,6 +29,12 @@ class ApexEvents(AppConfig):
         self.tournament_pos = dict()
         self.tournament_times = dict()
         self.tournament_dnf = 0
+
+        self.setting_summit_autodnq_players = Setting(
+            'summit_automoderate_players', 'Defines if DNQs should be handled automatically by ApexEvents.', Setting.CAT_BEHAVIOUR, type=bool,
+            description='Defines if DNQs should be handled automatically by ApexEvents.',
+            default=False,
+        )
     
     async def on_start(self):
         await self.instance.permission_manager.register('manage_event', 'Enables access to the AutoModerator configuration commands.', app=self, min_level=2)
@@ -54,6 +61,8 @@ class ApexEvents(AppConfig):
         self.context.signals.listen(tm_signals.finish, self.player_finish)
         self.context.signals.listen(tm_signals.scores, self.scores)
         self.context.signals.listen(tm_signals.warmup_end, self.warmup_end)
+
+        await self.context.setting.register(self.setting_summit_autodnq_players)
 
     async def level9_start(self, player, data, **kwargs):
         if self.tournament == '':
@@ -183,7 +192,7 @@ class ApexEvents(AppConfig):
                                      .format(url_block), player)
 
     async def apexevents_info(self, player, data, **kwargs):
-        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS $FFFManaging System v$FF00.3.3', player)
+        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS $FFFManaging System v$FF00.3.4', player)
 
         if self.tournament == 'level9':
             await self.instance.chat('$s$1EF/lvl9rank$FFF: $iGet your current ranking information.', player)
@@ -265,6 +274,7 @@ class ApexEvents(AppConfig):
 
         elif self.tournament == 'summit':
             online = self.instance.player_manager.online_logins
+            auto_dnq = self.setting_summit_autodnq_players.get_value()
 
             if self.current_map < 1:
                 time.sleep(5)
@@ -295,7 +305,32 @@ class ApexEvents(AppConfig):
                         await self.instance.chat('$s$1EFPRELIMINARIES | $FFFYour total points: $FE0{} $FFF(Pos $FE0{}$FFF)'
                                                  .format(str(self.tournament_players[player]), str(player_pos)), player)
             elif self.current_map == 3:
-                time.sleep(7.5)
+                time.sleep(2.5)
+                if len(self.tournament_pos) > 17:
+                    player_ref = self.tournament_pos[14]
+                    points_ref = self.tournament_players[player_ref]
+                    position_ref = 14
+                elif len(self.tournament_pos) > 12:
+                    player_ref = self.tournament_pos[12]
+                    points_ref = self.tournament_players[player_ref]
+                    position_ref = 12
+
+                for player in self.tournament_players.keys():
+                    if len(self.tournament_pos) > 12:
+                        diff_to_q = self.tournament_players[player] - points_ref
+                        if diff_to_q > 0:
+                            colorcode = '$3C0+'
+                        else:
+                            colorcode = '$F30'
+
+                        await self.instance.chat('$s$1EFPRELIMINARIES | $FFFYour total points: $FE0{} $FFF(Diff to P{}: {}{}$FFF)'
+                                                 .format(str(self.tournament_players[player]), str(position_ref), colorcode, str(diff_to_q)), player)
+                    else:
+                        player_pos = list(self.tournament_pos.keys())[list(self.tournament_pos.values()).index(player)]
+                        await self.instance.chat('$s$1EFPRELIMINARIES | $FFFYour total points: $FE0{} $FFF(Pos $FE0{}$FFF)'
+                                                 .format(str(self.tournament_players[player]), str(player_pos)), player)
+
+                time.sleep(5)
                 players_current = len(self.tournament_pos)
                 if players_current > 17:
                     await self.instance.chat('$s$1EFPRELIMINARIES | $FFFDNQ\'ed players:')
@@ -304,7 +339,8 @@ class ApexEvents(AppConfig):
                         if player_login_out in online:
                             player_out = self.instance.player_manager.get_player(player_login_out)
                             await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_out.nickname))
-                            await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
+                            if auto_dnq:
+                                await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
                         else:
                             await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_login_out))
 
@@ -316,7 +352,8 @@ class ApexEvents(AppConfig):
                         if player_login_out in online:
                             player_out = self.instance.player_manager.get_player(player_login_out)
                             await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_out.nickname))
-                            await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
+                            if auto_dnq:
+                                await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
                         else:
                             await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_login_out))
 
@@ -331,7 +368,8 @@ class ApexEvents(AppConfig):
                         if player_login_out in online:
                             player_out = self.instance.player_manager.get_player(player_login_out)
                             await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_out.nickname))
-                            await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
+                            if auto_dnq:
+                                await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
                         else:
                             await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_login_out))
 
@@ -343,7 +381,8 @@ class ApexEvents(AppConfig):
                         if player_login_out in online:
                             player_out = self.instance.player_manager.get_player(player_login_out)
                             await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_out.nickname))
-                            await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
+                            if auto_dnq:
+                                await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
                         else:
                             await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_login_out))
 
@@ -358,7 +397,8 @@ class ApexEvents(AppConfig):
                         if player_login_out in online:
                             player_out = self.instance.player_manager.get_player(player_login_out)
                             await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_out.nickname))
-                            await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
+                            if auto_dnq:
+                                await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
                         else:
                             await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_login_out))
 
