@@ -448,7 +448,6 @@ class ApexEvents(AppConfig):
                             self.tournament_players[player['player'].login] = player['map_points']
 
                     positions = sorted(self.tournament_players, key=self.tournament_players.get, reverse=True)
-                    self.tournament_pos.clear()
                     self.tournament_pos = {rank: key for rank, key in enumerate(positions, 1)}
 
     async def warmup_end(self):
@@ -464,5 +463,5 @@ class ApexEvents(AppConfig):
         await self.instance.chat('$FFFCurrent ranking ({}): $F00{}'.format(len(self.tournament_pos), str(self.tournament_pos)), player)
         if self.tournament == 'summit' and self.current_map > 1:
             await self.instance.chat('$FFFPlayer amount at start: $F00{}'.format(str(self.tournament_players_amt)), player)
-            await self.instance.chat('$FFFPlayers: $F00{}'.format(str(self.tournament_players)), player)
-            await self.instance.chat('$FFFPlayers: $F00{}'.format(str(self.instance.player_manager.online_logins)), player)
+            await self.instance.chat('$FFFPlayers in tournament: $F00{}'.format(str(self.tournament_players)), player)
+            await self.instance.chat('$FFFPlayers online: $F00{}'.format(str(self.instance.player_manager.online_logins)), player)
