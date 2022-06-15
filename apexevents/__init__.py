@@ -334,7 +334,7 @@ class ApexEvents(AppConfig):
                 players_current = len(self.tournament_pos)
                 if players_current > 17:
                     await self.instance.chat('$s$1EFPRELIMINARIES | $FFFDNQ\'ed players:')
-                    for i in range(players_current, 15, -1):
+                    for i in range(players_current, 14, -1):
                         player_login_out = self.tournament_pos[i]
                         if player_login_out in online:
                             player_out = self.instance.player_manager.get_player(player_login_out)
@@ -347,7 +347,7 @@ class ApexEvents(AppConfig):
                         del self.tournament_players[player_login_out]
                 elif players_current > 12:
                     await self.instance.chat('$s$1EFPRELIMINARIES | $FFFDNQ\'ed players:')
-                    for i in range(players_current, 13, -1):
+                    for i in range(players_current, 12, -1):
                         player_login_out = self.tournament_pos[i]
                         if player_login_out in online:
                             player_out = self.instance.player_manager.get_player(player_login_out)
@@ -363,7 +363,7 @@ class ApexEvents(AppConfig):
                 players_current = len(self.tournament_pos)
                 if players_current > 13:
                     await self.instance.chat('$s$1EFELIMINATION 1 | $FFFDNQ\'ed players:')
-                    for i in range(players_current, 12, -1):
+                    for i in range(players_current, 11, -1):
                         player_login_out = self.tournament_pos[i]
                         if player_login_out in online:
                             player_out = self.instance.player_manager.get_player(player_login_out)
@@ -376,7 +376,7 @@ class ApexEvents(AppConfig):
                         del self.tournament_players[player_login_out]
                 elif players_current > 10:
                     await self.instance.chat('$s$1EFELIMINATION 1 | $FFFDNQ\'ed players:')
-                    for i in range(players_current, 11, -1):
+                    for i in range(players_current, 10, -1):
                         player_login_out = self.tournament_pos[i]
                         if player_login_out in online:
                             player_out = self.instance.player_manager.get_player(player_login_out)
@@ -392,7 +392,7 @@ class ApexEvents(AppConfig):
                 players_current = len(self.tournament_pos)
                 if players_current > 8:
                     await self.instance.chat('$s$1EFELIMINATION 2 | $FFFDNQ\'ed players:')
-                    for i in range(players_current, 9, -1):
+                    for i in range(players_current, 8, -1):
                         player_login_out = self.tournament_pos[i]
                         if player_login_out in online:
                             player_out = self.instance.player_manager.get_player(player_login_out)
@@ -460,4 +460,8 @@ class ApexEvents(AppConfig):
                 self.tournament_players[player] = 0
 
     async def debug(self, player, data, **kwargs):
-        await self.instance.chat('$FFFCurrent ranking: $F00{}'.format(str(self.tournament_pos)), player)
+        await self.instance.chat('$FFFCurrent ranking ({}): $F00{}'.format(len(self.tournament_pos), str(self.tournament_pos)), player)
+        if self.tournament == 'summit' and self.current_map > 1:
+            await self.instance.chat('$FFFPlayer amount at start: $F00{}'.format(str(self.tournament_players_amt)), player)
+            await self.instance.chat('$FFFPlayers: $F00{}'.format(str(self.tournament_players)), player)
+            await self.instance.chat('$FFFPlayers: $F00{}'.format(str(self.instance.player_manager.online_logins)), player)
