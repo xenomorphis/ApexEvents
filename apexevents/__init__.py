@@ -448,6 +448,7 @@ class ApexEvents(AppConfig):
                             self.tournament_players[player['player'].login] = player['map_points']
 
                     positions = sorted(self.tournament_players, key=self.tournament_players.get, reverse=True)
+                    self.tournament_pos.clear()
                     self.tournament_pos = {rank: key for rank, key in enumerate(positions, 1)}
 
     async def warmup_end(self):
