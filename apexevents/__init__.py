@@ -214,7 +214,7 @@ class ApexEvents(AppConfig):
         if self.tournament == 'level9':
             self.current_map += 1
 
-            if self.current_map < 9:
+            if self.current_map < 10:
                 if self.current_map == 0:
                     await self.instance.command_manager.execute(self.admin, '//modesettings', 'S_TimeLimit', str(540))
                     self.current_map += 1
@@ -233,7 +233,7 @@ class ApexEvents(AppConfig):
                     
                         await self.instance.chat('$s$FFF Your current rank: $1EF{}. {}  $1EF{}'
                                                  .format(player_pos, player.nickname, player_total), player)
-            elif self.current_map == 9:
+            elif self.current_map == 10:
                 await self.show_results()
                 self.tournament = ''
 
