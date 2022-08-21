@@ -209,8 +209,8 @@ class ApexEvents(AppConfig):
         await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS $FFFManaging System v$FF00.3.5', player)
 
         if self.tournament == 'level9':
-            await self.instance.chat('$s$1EF/lvl9rank$FFF: $iGet your current ranking information.', player)
-            await self.instance.chat('$s$1EF/lvl9rank 1$FFF: $iGet the complete leaderboard.', player)
+            await self.instance.chat('$s$1EF/lvl9$FFF: $iGet your current ranking information.', player)
+            await self.instance.chat('$s$1EF/lvl9 1$FFF: $iGet the complete leaderboard.', player)
 
         await self.instance.chat('$s$1EF/rulebook$FFF: $iGet some information about the rules of the current tournament.', player)
 
