@@ -171,30 +171,18 @@ class ApexEvents(AppConfig):
                         await self.instance.chat('$s$FFF// $1EF{}{}: {}  $1EF{}'.format(str(pos), suffix, player, times.format_time(player_time)))
                     else:
                         await self.instance.chat('$s$FFF// $1EF{}{}: {}  $1EF{}'.format(str(pos), suffix, player, times.format_time(player_time)), target)
-                elif pos == 21:
-                    suffix = 'st'
-                    rel_time = self.tournament_times[player] - self.tournament_times[self.tournament_pos[1]]
-                    if type(target) is str:
-                        await self.instance.chat('$s$FFF// $FE0{}{}: {}  $FE0+{}'.format(str(pos), suffix, player, times.format_time(rel_time)))
-                    else:
-                        await self.instance.chat('$s$FFF// $FE0{}{}: {}  $FE0+{}'.format(str(pos), suffix, player, times.format_time(rel_time)), target)
-                elif pos == 2 or pos == 22:
-                    suffix = 'nd'
-                    rel_time = self.tournament_times[player] - self.tournament_times[self.tournament_pos[1]]
-                    if type(target) is str:
-                        await self.instance.chat('$s$FFF// $FE0{}{}: {}  $FE0+{}'.format(str(pos), suffix, player, times.format_time(rel_time)))
-                    else:
-                        await self.instance.chat('$s$FFF// $FE0{}{}: {}  $FE0+{}'.format(str(pos), suffix, player, times.format_time(rel_time)), target)
-                elif pos == 3 or pos == 23:
-                    suffix = 'rd'
-                    rel_time = self.tournament_times[player] - self.tournament_times[self.tournament_pos[1]]
-                    if type(target) is str:
-                        await self.instance.chat('$s$FFF// $FE0{}{}: {}  $FE0+{}'.format(str(pos), suffix, player, times.format_time(rel_time)))
-                    else:
-                        await self.instance.chat('$s$FFF// $FE0{}{}: {}  $FE0+{}'.format(str(pos), suffix, player, times.format_time(rel_time)), target)
                 else:
-                    suffix = 'th'
+                    if pos == 21:
+                        suffix = 'st'
+                    elif pos == 2 or pos == 22:
+                        suffix = 'nd'
+                    elif pos == 3 or pos == 23:
+                        suffix = 'rd'
+                    else:
+                        suffix = 'th'
+
                     rel_time = self.tournament_times[player] - self.tournament_times[self.tournament_pos[1]]
+
                     if type(target) is str:
                         await self.instance.chat('$s$FFF// $FE0{}{}: {}  $FE0+{}'.format(str(pos), suffix, player, times.format_time(rel_time)))
                     else:
