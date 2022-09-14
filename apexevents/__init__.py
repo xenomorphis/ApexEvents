@@ -46,8 +46,8 @@ class ApexEvents(AppConfig):
             Command(command='lvl9clear', target=self.level9_clear, perms='apexevents:manage_event', admin=True,
                     description='Resets the AutoMod-Tool for LEVEL9 events'),
             Command(command='lvl9rank', aliases=['lvl9'], target=self.level9_rank, description='Shows current ranking information.')
-                .addParam(name="showAll", nargs=1, type=int, required=False, default=0,
-                          help="$FB3Use $FFF0 $FB3for displaying only the players around your current position, use $FFF1 $FB3for displaying the complete leaderboard."),
+            .add_param(name="showAll", nargs=1, type=int, required=False, default=0,
+                       help="$FB3Use $FFF0 $FB3for displaying only the players around your current position, use $FFF1 $FB3for displaying the complete leaderboard."),
             Command(command='summitstart', target=self.summit_start, perms='apexevents:manage_event', admin=True,
                     description='Starts the AutoMod-Tool for THE SUMMIT'),
             Command(command='summitclear', target=self.summit_clear, perms='apexevents:manage_event', admin=True,
@@ -155,19 +155,19 @@ class ApexEvents(AppConfig):
         else:
             await self.show_results(player)
 
-    async def show_results(self, target = 'all'):
+    async def show_results(self, target='all'):
         if self.tournament == 'level9':
-            if type(target) is str:
+            if target == 'all' and self.current_map == 10:
                 time.sleep(7.5)
                 await self.instance.chat('$s$FB3Auto$FFFModerator: The tournament is concluded. Here are the final results:')
 
-            for pos in range(1, len(self.tournament_pos)):
+            for pos in range(1, len(self.tournament_pos) + 1):
                 player = self.tournament_pos[pos]
                 player_time = self.tournament_times[player]
 
                 if pos == 1:
                     suffix = 'st'
-                    if type(target) is str:
+                    if target == 'all':
                         await self.instance.chat('$s$FFF// $1EF{}{}: {}  $1EF{}'.format(str(pos), suffix, player, times.format_time(player_time)))
                     else:
                         await self.instance.chat('$s$FFF// $1EF{}{}: {}  $1EF{}'.format(str(pos), suffix, player, times.format_time(player_time)), target)
@@ -183,12 +183,12 @@ class ApexEvents(AppConfig):
 
                     rel_time = self.tournament_times[player] - self.tournament_times[self.tournament_pos[1]]
 
-                    if type(target) is str:
+                    if target == 'all':
                         await self.instance.chat('$s$FFF// $FE0{}{}: {}  $FE0+{}'.format(str(pos), suffix, player, times.format_time(rel_time)))
                     else:
                         await self.instance.chat('$s$FFF// $FE0{}{}: {}  $FE0+{}'.format(str(pos), suffix, player, times.format_time(rel_time)), target)
 
-                if type(target) is str:
+                if target == 'all':
                     time.sleep(0.75)
 
     async def rules(self, player, data, **kwargs):
@@ -206,7 +206,7 @@ class ApexEvents(AppConfig):
                                      .format(url_block), player)
 
     async def apexevents_info(self, player, data, **kwargs):
-        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS $FFFManaging System v$FF00.3.5', player)
+        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS $FFFManaging System v$FF00.3.5-4', player)
 
         if self.tournament == 'level9':
             await self.instance.chat('$s$1EF/lvl9$FFF: $iGet your current ranking information.', player)
