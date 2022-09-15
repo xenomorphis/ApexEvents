@@ -156,10 +156,14 @@ class ApexEvents(AppConfig):
             await self.show_results(player)
 
     async def show_results(self, target='all'):
-        if self.tournament == 'level9':
+        if self.tournament == 'level9' and self.current_map > 1:
             if target == 'all' and self.current_map == 10:
                 time.sleep(7.5)
                 await self.instance.chat('$s$FB3Auto$FFFModerator: The tournament is concluded. Here are the final results:')
+            else:
+                await self.instance.chat(
+                    '$s$FB3Auto$FFFModerator: Current standings of the tournament (after map $FB3{}):'
+                    .format(self.current_map - 1))
 
             for pos in range(1, len(self.tournament_pos) + 1):
                 player = self.tournament_pos[pos]
@@ -191,6 +195,10 @@ class ApexEvents(AppConfig):
                 if target == 'all':
                     time.sleep(0.75)
 
+        elif self.tournament == 'level9' and self.current_map < 2:
+            await self.instance.chat(
+                '$s$FB3Auto$FFFModerator: We don\'t have a tournament leaderboard yet. Wait until the next map :)')
+
     async def rules(self, player, data, **kwargs):
         url_block = ''
 
@@ -206,7 +214,7 @@ class ApexEvents(AppConfig):
                                      .format(url_block), player)
 
     async def apexevents_info(self, player, data, **kwargs):
-        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS $FFFManaging System v$FF00.3.5-4', player)
+        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.4.0', player)
 
         if self.tournament == 'level9':
             await self.instance.chat('$s$1EF/lvl9$FFF: $iGet your current ranking information.', player)

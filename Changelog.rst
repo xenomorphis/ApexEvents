@@ -4,6 +4,10 @@ ApexEvents
 
 Changelog
 -----------
+``0.4.0``
+    | Feature: [SUMMIT] Adds basic support for 'THE SUMMIT' event mode
+    | Fix: [LEVEL9] Typo in function call ``Command.add_params``
+    | Fix: [LEVEL9] ``show_results`` skips last leaderboard record
 
 ``0.3.5``
     | Update: [LEVEL9] Modifies ``/lvl9rank`` command for getting the entire leaderboard via an
