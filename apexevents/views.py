@@ -32,15 +32,15 @@ class EventListView(ManualListView):
             },
             {
                 'name': 'Player',
-                'index': 'map_name',
-                'sorting': True,
+                'index': 'player_name',
+                'sorting': False,
                 'searching': True,
                 'width': 100,
                 'type': 'label'
             },
             {
                 'name': 'Total Time',
-                'index': 'player_nickname',
+                'index': 'total_time',
                 'sorting': True,
                 'searching': False,
                 'width': 50
@@ -48,11 +48,16 @@ class EventListView(ManualListView):
         ]
 
     async def get_data(self):
-        index = 1
         items = []
-        for item in self.app.jukebox:
-            items.append({'index': index, 'map_name': item['map'].name, 'player_nickname': item['player'].nickname,
-                          'player_login': item['player'].login})
-            index += 1
+
+        for pos in range(1, len(self.app.tournament_pos) + 1):
+            player = self.app.tournament_pos[pos]
+            player_time = self.app.tournament_times[player]
+
+            if pos == 1:
+                items.append({'pos': pos, 'player_name': player, 'total_time': times.format_time(player_time)})
+            else:
+                rel_time = self.app.tournament_times[player] - self.app.tournament_times[self.app.tournament_pos[1]]
+                items.append({'pos': pos, 'player_name': player, 'total_time': times.format_time(rel_time)})
 
         return items
