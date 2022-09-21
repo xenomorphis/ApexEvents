@@ -2,6 +2,7 @@ import asyncio
 import time
 
 from pyplanet.apps.config import AppConfig
+from pyplanet.apps.contrib.apexevents.views import EventListView
 from pyplanet.contrib.command import Command
 from pyplanet.contrib.setting import Setting
 from pyplanet.utils import times
