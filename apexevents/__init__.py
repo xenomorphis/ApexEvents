@@ -157,44 +157,13 @@ class ApexEvents(AppConfig):
             await self.show_results(player)
 
     async def show_results(self, target='all'):
-        if self.tournament == 'level9' and self.current_map > 1:
-            if target == 'all' and self.current_map == 10:
-                time.sleep(7.5)
-                await self.instance.chat('$s$FB3Auto$FFFModerator: The tournament is concluded. Here are the final results:')
+        if (self.tournament == 'level9' and self.current_map > 1) or self.current_map == 10:
+            view = EventListView(self)
+
+            if target == 'all':
+                await view.display()
             else:
-                await self.instance.chat(
-                    '$s$FB3Auto$FFFModerator: Current standings of the tournament (after map $FB3{}):'
-                    .format(self.current_map - 1))
-
-            for pos in range(1, len(self.tournament_pos) + 1):
-                player = self.tournament_pos[pos]
-                player_time = self.tournament_times[player]
-
-                if pos == 1:
-                    suffix = 'st'
-                    if target == 'all':
-                        await self.instance.chat('$s$FFF// $1EF{}{}: {}  $1EF{}'.format(str(pos), suffix, player, times.format_time(player_time)))
-                    else:
-                        await self.instance.chat('$s$FFF// $1EF{}{}: {}  $1EF{}'.format(str(pos), suffix, player, times.format_time(player_time)), target)
-                else:
-                    if pos == 21:
-                        suffix = 'st'
-                    elif pos == 2 or pos == 22:
-                        suffix = 'nd'
-                    elif pos == 3 or pos == 23:
-                        suffix = 'rd'
-                    else:
-                        suffix = 'th'
-
-                    rel_time = self.tournament_times[player] - self.tournament_times[self.tournament_pos[1]]
-
-                    if target == 'all':
-                        await self.instance.chat('$s$FFF// $FE0{}{}: {}  $FE0+{}'.format(str(pos), suffix, player, times.format_time(rel_time)))
-                    else:
-                        await self.instance.chat('$s$FFF// $FE0{}{}: {}  $FE0+{}'.format(str(pos), suffix, player, times.format_time(rel_time)), target)
-
-                if target == 'all':
-                    time.sleep(0.75)
+                await view.display(player=target.login)
 
         elif self.tournament == 'level9' and self.current_map < 2:
             await self.instance.chat(
@@ -217,7 +186,7 @@ class ApexEvents(AppConfig):
     async def apexevents_info(self, player, data, **kwargs):
         await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.4.0', player)
 
-        if self.tournament == 'level9':
+        if self.tournament == 'level9' or self.current_map == 10:
             await self.instance.chat('$s$1EF/lvl9$FFF: $iGet your current ranking information.', player)
             await self.instance.chat('$s$1EF/lvl9 1$FFF: $iGet the complete leaderboard.', player)
 
