@@ -2,7 +2,7 @@ import asyncio
 import time
 
 from pyplanet.apps.config import AppConfig
-from pyplanet.apps.contrib.apexevents.views import EventListView
+from .views import EventListView
 from pyplanet.contrib.command import Command
 from pyplanet.contrib.setting import Setting
 from pyplanet.utils import times
@@ -140,7 +140,7 @@ class ApexEvents(AppConfig):
                     player_prev_total = self.tournament_times[player_prev]
                     time_diff = abs(player_prev_total - player_total)
                     await self.instance.chat('$s$FFF Next rank ahead: $FE0{}. {}  $FE0-{}'
-                                            .format((player_pos - 1), player_prev, times.format_time(time_diff)), player)
+                                             .format((player_pos - 1), player_prev, times.format_time(time_diff)), player)
 
                 await self.instance.chat('$s$FFF Your current rank: $1EF{}. {}  $1EF{}'
                                         .format(player_pos, player.nickname, times.format_time(self.tournament_times[player.nickname])), player)
@@ -150,20 +150,20 @@ class ApexEvents(AppConfig):
                     player_next_total = self.tournament_times[player_next]
                     time_diff = abs(player_next_total - player_total)
                     await self.instance.chat('$s$FFF Next rank behind: $FE0{}. {}  $FE0+{}'
-                                            .format((player_pos + 1), player_next, times.format_time(time_diff)), player)
+                                             .format((player_pos + 1), player_next, times.format_time(time_diff)), player)
             else:
                 await self.instance.chat('$s$FFF You don\'t have a tournament ranking yet. Finish a map to get one.', player)
         else:
-            await self.show_results(player)
+            await self.show_results(target=player.login)
 
-    async def show_results(self, target='all'):
+    async def show_results(self, target='_all'):
         if (self.tournament == 'level9' and self.current_map > 1) or self.current_map == 10:
             view = EventListView(self)
 
-            if target == 'all':
+            if target == '_all':
                 await view.display()
             else:
-                await view.display(player=target.login)
+                await view.display(player=target)
 
         elif self.tournament == 'level9' and self.current_map < 2:
             await self.instance.chat(
@@ -184,7 +184,7 @@ class ApexEvents(AppConfig):
                                      .format(url_block), player)
 
     async def apexevents_info(self, player, data, **kwargs):
-        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.4.0', player)
+        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.4.1-2', player)
 
         if self.tournament == 'level9' or self.current_map == 10:
             await self.instance.chat('$s$1EF/lvl9$FFF: $iGet your current ranking information.', player)
