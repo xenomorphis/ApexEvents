@@ -24,7 +24,7 @@ class EventListView(ManualListView):
         return [
             {
                 'name': 'Position',
-                'index': 'index',
+                'index': 'pos',
                 'sorting': True,
                 'searching': False,
                 'width': 10,
