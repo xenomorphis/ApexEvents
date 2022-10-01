@@ -130,7 +130,7 @@ class ApexEvents(AppConfig):
             await self.instance.chat('$s$FB3Auto$FFFModerator: Tournament successfully cleared!', player)
 
     async def level9_rank(self, player, data, **kwargs):
-        if data.showAll == 0:
+        if data.showAll == 0 and self.current_map < 10:
             if player.nickname in self.tournament_pos.values():
                 player_pos = list(self.tournament_pos.keys())[list(self.tournament_pos.values()).index(player.nickname)]
                 player_total = self.tournament_times[player.nickname]
@@ -153,21 +153,14 @@ class ApexEvents(AppConfig):
                                              .format((player_pos + 1), player_next, times.format_time(time_diff)), player)
             else:
                 await self.instance.chat('$s$FFF You don\'t have a tournament ranking yet. Finish a map to get one.', player)
+
         else:
-            await self.show_results(target=player.login)
-
-    async def show_results(self, target='_all'):
-        if (self.tournament == 'level9' and self.current_map > 1) or self.current_map == 10:
-            view = EventListView(self)
-
-            if target == '_all':
-                await view.display()
-            else:
-                await view.display(player=target)
-
-        elif self.tournament == 'level9' and self.current_map < 2:
-            await self.instance.chat(
-                '$s$FB3Auto$FFFModerator: We don\'t have a tournament leaderboard yet. Wait until the next map :)')
+            if (self.tournament == 'level9' and self.current_map > 1) or self.current_map == 10:
+                view = EventListView(self)
+                await view.display(player.login)
+            elif self.tournament == 'level9' and self.current_map < 2:
+                await self.instance.chat(
+                    '$s$FB3Auto$FFFModerator: We don\'t have a tournament leaderboard yet. Wait until the next map :)')
 
     async def rules(self, player, data, **kwargs):
         url_block = ''
@@ -184,7 +177,7 @@ class ApexEvents(AppConfig):
                                      .format(url_block), player)
 
     async def apexevents_info(self, player, data, **kwargs):
-        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.4.1-2', player)
+        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.4.1-4', player)
 
         if self.tournament == 'level9' or self.current_map == 10:
             await self.instance.chat('$s$1EF/lvl9$FFF: $iGet your current ranking information.', player)
@@ -227,7 +220,8 @@ class ApexEvents(AppConfig):
                         await self.instance.chat('$s$FFF Your current rank: $1EF{}. {}  $1EF{}'
                                                  .format(player_pos, player.nickname, player_total), player)
             elif self.current_map == 10:
-                await self.show_results()
+                await self.instance.chat('$s$FFFThe tournament has concluded. You can view the final results via the'
+                                         'command $FB1/lvl9$FFF. Thx for playing and see \'ya next time!')
                 self.tournament = ''
 
         elif self.tournament == 'summit':
