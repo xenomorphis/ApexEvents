@@ -23,11 +23,11 @@ class EventListView(ManualListView):
     async def get_fields(self):
         return [
             {
-                'name': 'Position',
+                'name': 'Rank',
                 'index': 'pos',
                 'sorting': True,
                 'searching': False,
-                'width': 20,
+                'width': 15,
                 'type': 'label'
             },
             {
@@ -43,7 +43,7 @@ class EventListView(ManualListView):
                 'index': 'total_time',
                 'sorting': True,
                 'searching': False,
-                'width': 40
+                'width': 45
             },
         ]
 
