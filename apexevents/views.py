@@ -27,7 +27,7 @@ class EventListView(ManualListView):
                 'index': 'pos',
                 'sorting': True,
                 'searching': False,
-                'width': 10,
+                'width': 20,
                 'type': 'label'
             },
             {
@@ -43,7 +43,7 @@ class EventListView(ManualListView):
                 'index': 'total_time',
                 'sorting': True,
                 'searching': False,
-                'width': 50
+                'width': 40
             },
         ]
 
