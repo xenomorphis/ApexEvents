@@ -143,7 +143,7 @@ class ApexEvents(AppConfig):
                                              .format((player_pos - 1), player_prev, times.format_time(time_diff)), player)
 
                 await self.instance.chat('$s$FFF Your current rank: $1EF{}. {}  $1EF{}'
-                                        .format(player_pos, player.nickname, times.format_time(self.tournament_times[player.nickname])), player)
+                                         .format(player_pos, player.nickname, times.format_time(self.tournament_times[player.nickname])), player)
 
                 if player_pos < len(self.tournament_pos):
                     player_next = self.tournament_pos[player_pos + 1]
@@ -399,9 +399,9 @@ class ApexEvents(AppConfig):
                         self.map_times[player] = map.time_author + 15000
 
                     if player in self.tournament_times:
-                        self.tournament_times[player] += self.map_times[player]         # Wenn der Spieler bereits eine Turniergesamtzeit besitzt, addiere die Map-Zeit auf
+                        self.tournament_times[player] += self.map_times[player]
                     else:
-                        self.tournament_times[player] = self.tournament_dnf + self.map_times[player]     # Wenn der Spieler noch keine Turniergesamtzeit besitzt, nimm die bisherige DNF-Zeit und addiere die Map-Zeit auf
+                        self.tournament_times[player] = self.tournament_dnf + self.map_times[player]
 
                 for player in self.tournament_times:
                     if player not in self.map_times:
