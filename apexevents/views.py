@@ -6,7 +6,7 @@ from pyplanet.utils import times
 
 
 class EventListView(ManualListView):
-    # based on https://github.com/PyPlanet/PyPlanet/blob/master/pyplanet/apps/contrib/jukebox/views.py
+
     app = None
 
     title = 'Current event leaderboard'
@@ -55,7 +55,11 @@ class EventListView(ManualListView):
             player_time = self.app.tournament_times[player]
 
             if pos == 1:
-                items.append({'pos': pos, 'player_name': player, 'total_time': times.format_time(player_time)})
+                if len(times.format_time(player_time)) < 9:
+                    items.append(
+                        {'pos': pos, 'player_name': player, 'total_time': '0' + times.format_time(player_time)})
+                else:
+                    items.append({'pos': pos, 'player_name': player, 'total_time': times.format_time(player_time)})
             else:
                 rel_time = self.app.tournament_times[player] - self.app.tournament_times[self.app.tournament_pos[1]]
                 items.append({'pos': pos, 'player_name': player, 'total_time': times.format_time(rel_time)})
