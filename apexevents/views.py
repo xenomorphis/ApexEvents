@@ -45,6 +45,13 @@ class EventListView(ManualListView):
                 'searching': False,
                 'width': 45
             },
+            {
+                'name': 'Maps finished',
+                'index': 'maps_finished',
+                'sorting': True,
+                'searching': False,
+                'width': 30
+            },
         ]
 
     async def get_data(self):
@@ -52,16 +59,20 @@ class EventListView(ManualListView):
 
         for pos in range(1, len(self.app.tournament_pos) + 1):
             player = self.app.tournament_pos[pos]
+            player_finished = self.app.finished_maps[player]
             player_time = self.app.tournament_times[player]
 
             if pos == 1:
                 if len(times.format_time(player_time)) < 9:
                     items.append(
-                        {'pos': pos, 'player_name': player, 'total_time': '0' + times.format_time(player_time)})
+                        {'pos': pos, 'player_name': player, 'total_time': '0' + times.format_time(player_time),
+                         'maps_finished': str(player_finished) + '/' + str(self.app.current_map - 1)})
                 else:
-                    items.append({'pos': pos, 'player_name': player, 'total_time': times.format_time(player_time)})
+                    items.append({'pos': pos, 'player_name': player, 'total_time': times.format_time(player_time),
+                                  'maps_finished': str(player_finished) + '/' + str(self.app.current_map - 1)})
             else:
                 rel_time = self.app.tournament_times[player] - self.app.tournament_times[self.app.tournament_pos[1]]
-                items.append({'pos': pos, 'player_name': player, 'total_time': times.format_time(rel_time)})
+                items.append({'pos': pos, 'player_name': player, 'total_time': times.format_time(rel_time),
+                              'maps_finished': str(player_finished) + '/' + str(self.app.current_map - 1)})
 
         return items
