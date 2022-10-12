@@ -158,10 +158,10 @@ class ApexEvents(AppConfig):
                 await self.instance.chat('$s$FFF You don\'t have a tournament ranking yet. Finish a map to get one.', player)
 
         else:
-            if (self.tournament == 'level9' and self.current_map > 1) or self.current_map == 10:
+            if (self.tournament == 'level9' and len(self.tournament_times) > 0) or self.current_map == 10:
                 view = EventListView(self)
                 await view.display(player.login)
-            elif self.tournament == 'level9' and self.current_map < 2:
+            elif self.tournament == 'level9' and len(self.tournament_times) == 0:
                 await self.instance.chat(
                     '$s$FB3Auto$FFFModerator: We don\'t have a tournament leaderboard yet. Wait until the next map :)')
 
@@ -420,9 +420,11 @@ class ApexEvents(AppConfig):
     async def player_finish(self, player, race_time, lap_time, lap_cps, race_cps, flow, raw, **kwargs):
         if self.tournament == 'level9' and self.current_map > 0:
             async with self.lock:
+                if player.nickname not in self.map_times:
+                    self.finished_maps[player.nickname] = 0
+
                 if (player.nickname not in self.map_times) or (self.map_times[player.nickname] == 0) or (lap_time < self.map_times[player.nickname]):
                     self.map_times[player.nickname] = lap_time
-                    self.finished_maps[player.nickname] = 0
 
     async def scores(self, section, players, **kwargs):
         if self.tournament == 'summit':
