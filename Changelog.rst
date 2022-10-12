@@ -4,6 +4,9 @@ ApexEvents
 
 Changelog
 -----------
+``0.4.2``
+    | Update: [LEVEL9] Adds the new column 'maps_finished' to the leaderboard UI
+
 ``0.4.1``
     | Feature: [LEVEL9] Adds a clean UI to the output of the complete leaderboard
     | Update: [LEVEL9] Adds a 'tournament concluded' chat message
