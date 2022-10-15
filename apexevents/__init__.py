@@ -180,7 +180,7 @@ class ApexEvents(AppConfig):
                                      .format(url_block), player)
 
     async def apexevents_info(self, player, data, **kwargs):
-        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.4.2-2', player)
+        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.4.2-4', player)
 
         if self.tournament == 'level9' or self.current_map == 10:
             await self.instance.chat('$s$1EF/lvl9$FFF: $iGet your current ranking information.', player)
@@ -215,6 +215,9 @@ class ApexEvents(AppConfig):
 
                 for player in all_online:
                     self.map_times[player.nickname] = 0
+
+                    if player.nickname not in self.finished_maps:
+                        self.finished_maps[player.nickname] = 0
 
                     if player.nickname in self.tournament_pos.values():
                         player_pos = list(self.tournament_pos.keys())[list(self.tournament_pos.values()).index(player.nickname)]
