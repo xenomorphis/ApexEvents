@@ -1,7 +1,4 @@
-import math
-
 from pyplanet.views.generics.list import ManualListView
-
 from pyplanet.utils import times
 
 
