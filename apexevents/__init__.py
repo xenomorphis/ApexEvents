@@ -1,4 +1,5 @@
 import asyncio
+from datetime import date
 import time
 
 from pyplanet.apps.config import AppConfig
@@ -26,6 +27,7 @@ class ApexEvents(AppConfig):
         self.current_map = -1
         self.map_times = dict()
         self.finished_maps = dict()
+        self.tournament_day = ''
         self.tournament_players = dict()
         self.tournament_players_amt = 0
         self.tournament_pos = dict()
@@ -71,6 +73,7 @@ class ApexEvents(AppConfig):
     async def level9_start(self, player, data, **kwargs):
         if self.tournament == '':
             self.tournament = 'level9'
+            self.tournament_day = date.today()
             self.admin = player
             self.map_times.clear()
             self.finished_maps.clear()
@@ -159,7 +162,7 @@ class ApexEvents(AppConfig):
 
         else:
             if (self.tournament == 'level9' and len(self.tournament_times) > 0) or self.current_map == 10:
-                view = EventListView(self)
+                view = EventListView(self, player.nickname)
                 await view.display(player.login)
             elif self.tournament == 'level9' and len(self.tournament_times) == 0:
                 await self.instance.chat(
@@ -180,7 +183,7 @@ class ApexEvents(AppConfig):
                                      .format(url_block), player)
 
     async def apexevents_info(self, player, data, **kwargs):
-        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.4.2-4', player)
+        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.4.2-7', player)
 
         if self.tournament == 'level9' or self.current_map == 10:
             await self.instance.chat('$s$1EF/lvl9$FFF: $iGet your current ranking information.', player)
