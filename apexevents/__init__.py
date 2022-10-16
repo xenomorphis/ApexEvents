@@ -25,6 +25,7 @@ class ApexEvents(AppConfig):
         self.tournament = ''
         self.current_map = -1
         self.map_times = dict()
+        self.finished_maps = dict()
         self.tournament_players = dict()
         self.tournament_players_amt = 0
         self.tournament_pos = dict()
@@ -72,6 +73,7 @@ class ApexEvents(AppConfig):
             self.tournament = 'level9'
             self.admin = player
             self.map_times.clear()
+            self.finished_maps.clear()
             self.tournament_times.clear()
             self.tournament_dnf = 0
 
@@ -115,6 +117,7 @@ class ApexEvents(AppConfig):
 
             self.current_map = -1
             self.map_times.clear()
+            self.finished_maps.clear()
             self.tournament_times.clear()
             self.tournament_dnf = 0
 
@@ -130,7 +133,7 @@ class ApexEvents(AppConfig):
             await self.instance.chat('$s$FB3Auto$FFFModerator: Tournament successfully cleared!', player)
 
     async def level9_rank(self, player, data, **kwargs):
-        if data.showAll == 0 and self.current_map < 10:
+        if data.showAll == 0 and self.tournament == 'level9' and self.current_map < 10:
             if player.nickname in self.tournament_pos.values():
                 player_pos = list(self.tournament_pos.keys())[list(self.tournament_pos.values()).index(player.nickname)]
                 player_total = self.tournament_times[player.nickname]
@@ -155,10 +158,10 @@ class ApexEvents(AppConfig):
                 await self.instance.chat('$s$FFF You don\'t have a tournament ranking yet. Finish a map to get one.', player)
 
         else:
-            if (self.tournament == 'level9' and self.current_map > 1) or self.current_map == 10:
+            if (self.tournament == 'level9' and len(self.tournament_times) > 0) or self.current_map == 10:
                 view = EventListView(self)
                 await view.display(player.login)
-            elif self.tournament == 'level9' and self.current_map < 2:
+            elif self.tournament == 'level9' and len(self.tournament_times) == 0:
                 await self.instance.chat(
                     '$s$FB3Auto$FFFModerator: We don\'t have a tournament leaderboard yet. Wait until the next map :)')
 
@@ -177,7 +180,7 @@ class ApexEvents(AppConfig):
                                      .format(url_block), player)
 
     async def apexevents_info(self, player, data, **kwargs):
-        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.4.1-4', player)
+        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.4.2-4', player)
 
         if self.tournament == 'level9' or self.current_map == 10:
             await self.instance.chat('$s$1EF/lvl9$FFF: $iGet your current ranking information.', player)
@@ -212,6 +215,9 @@ class ApexEvents(AppConfig):
 
                 for player in all_online:
                     self.map_times[player.nickname] = 0
+
+                    if player.nickname not in self.finished_maps:
+                        self.finished_maps[player.nickname] = 0
 
                     if player.nickname in self.tournament_pos.values():
                         player_pos = list(self.tournament_pos.keys())[list(self.tournament_pos.values()).index(player.nickname)]
@@ -397,6 +403,8 @@ class ApexEvents(AppConfig):
                 for player in self.map_times:
                     if self.map_times[player] == 0:
                         self.map_times[player] = map.time_author + 15000
+                    else:
+                        self.finished_maps[player] += 1
 
                     if player in self.tournament_times:
                         self.tournament_times[player] += self.map_times[player]
@@ -415,6 +423,9 @@ class ApexEvents(AppConfig):
     async def player_finish(self, player, race_time, lap_time, lap_cps, race_cps, flow, raw, **kwargs):
         if self.tournament == 'level9' and self.current_map > 0:
             async with self.lock:
+                if player.nickname not in self.map_times:
+                    self.finished_maps[player.nickname] = 0
+
                 if (player.nickname not in self.map_times) or (self.map_times[player.nickname] == 0) or (lap_time < self.map_times[player.nickname]):
                     self.map_times[player.nickname] = lap_time
 
