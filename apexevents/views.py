@@ -92,10 +92,10 @@ class EventListView(ManualListView):
 
                 if player == self.viewer:
                     items.append({'pos': '$FB1' + str(pos), 'player_name': player,
-                                  'total_time': '$FB1' + times.format_time(rel_time),
+                                  'total_time': '$FB1+' + times.format_time(rel_time),
                                   'maps_finished': '$FB1' + str(player_finished) + '/' + str(self.app.current_map - 1)})
                 else:
-                    items.append({'pos': pos, 'player_name': player, 'total_time': times.format_time(rel_time),
+                    items.append({'pos': pos, 'player_name': player, 'total_time': '+' + times.format_time(rel_time),
                                   'maps_finished': str(player_finished) + '/' + str(self.app.current_map - 1)})
 
         return items
