@@ -166,7 +166,8 @@ class ApexEvents(AppConfig):
                 await view.display(player.login)
             elif self.tournament == 'level9' and len(self.tournament_times) == 0:
                 await self.instance.chat(
-                    '$s$FB3Auto$FFFModerator: We don\'t have a tournament leaderboard yet. Wait until the next map :)')
+                    '$s$FB3Auto$FFFModerator: We don\'t have a tournament leaderboard yet. Wait until the next map :)',
+                    player)
 
     async def rules(self, player, data, **kwargs):
         url_block = ''
