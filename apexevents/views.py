@@ -9,7 +9,7 @@ class EventListView(ManualListView):
 
     title = 'LEVEL9 – Current leaderboard'
     icon_style = 'Icons128x128_1'
-    icon_substyle = 'Browse'
+    icon_substyle = 'Statistics'
     viewer = None
 
     data = []
