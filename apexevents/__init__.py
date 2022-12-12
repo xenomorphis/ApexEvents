@@ -122,7 +122,6 @@ class ApexEvents(AppConfig):
     async def level9_clear(self, player, data, **kwargs):
         if self.tournament == 'level9':
             self.tournament = ''
-
             self.current_map = -1
             self.map_times.clear()
             self.finished_maps.clear()
@@ -266,24 +265,29 @@ class ApexEvents(AppConfig):
                     await self.instance.chat('$s$1EFQualification condition: $FFFBe upon the Top 14 players with the most total points after Map 3.')
                 elif self.tournament_players_amt > 12:
                     await self.instance.chat('$s$1EFQualification condition: $FFFBe upon the Top 12 players with the most total points after Map 3.')
+
             elif self.current_map == 4:
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFElimination Round 1')
                 if self.tournament_players_amt > 17:
                     await self.instance.chat('$s$1EFEliminations: $FFFLast three players at the end of this map.')
                 elif self.tournament_players_amt > 12:
                     await self.instance.chat('$s$1EFEliminations: $FFFLast two players at the end of this map.')
+
             elif self.current_map == 5:
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFElimination Round 2')
                 if self.tournament_players_amt > 17:
                     await self.instance.chat('$s$1EFEliminations: $FFFLast three players at the end of this map.')
                 elif self.tournament_players_amt > 12:
                     await self.instance.chat('$s$1EFEliminations: $FFFLast two players at the end of this map.')
+
             elif self.current_map == 6:
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFSemi-Final')
                 if self.tournament_players_amt > 12:
                     await self.instance.chat('$s$1EFEliminations: $FFFLast player per run starting with the fourth run.')
+
             elif self.current_map == 7:
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFFinal')
+
             else:
                 self.tournament_locked = False
                 self.tournament = ''
@@ -356,6 +360,7 @@ class ApexEvents(AppConfig):
 
                 time.sleep(5)
                 players_current = len(self.tournament_pos)
+
                 if players_current > 17:
                     await self.instance.chat('$s$1EFPRELIMINARIES | $FFFDNQ\'ed players:')
                     for i in range(players_current, 14, -1):
@@ -369,6 +374,7 @@ class ApexEvents(AppConfig):
                             await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_login_out))
 
                         del self.tournament_players[player_login_out]
+
                 elif players_current > 12:
                     await self.instance.chat('$s$1EFPRELIMINARIES | $FFFDNQ\'ed players:')
                     for i in range(players_current, 12, -1):
@@ -382,6 +388,7 @@ class ApexEvents(AppConfig):
                             await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_login_out))
 
                         del self.tournament_players[player_login_out]
+
             elif self.current_map == 4:
                 time.sleep(7.5)
                 players_current = len(self.tournament_pos)
@@ -398,6 +405,7 @@ class ApexEvents(AppConfig):
                             await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_login_out))
 
                         del self.tournament_players[player_login_out]
+
                 elif players_current > 10:
                     await self.instance.chat('$s$1EFELIMINATION 1 | $FFFDNQ\'ed players:')
                     for i in range(players_current, 10, -1):
@@ -411,6 +419,7 @@ class ApexEvents(AppConfig):
                             await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_login_out))
 
                         del self.tournament_players[player_login_out]
+
             elif self.current_map == 5:
                 time.sleep(7.5)
                 players_current = len(self.tournament_pos)
@@ -470,6 +479,7 @@ class ApexEvents(AppConfig):
 
                     positions = sorted(self.tournament_players, key=self.tournament_players.get, reverse=True)
                     self.tournament_pos = {rank: key for rank, key in enumerate(positions, 1)}
+
             elif self.current_map > 3:
                 if section == 'EndMap':
                     for player in players:
