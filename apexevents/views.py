@@ -4,9 +4,7 @@ from pyplanet.utils import times
 
 
 class Lvl9ListView(ManualListView):
-
     app = None
-
     title = 'LEVEL9 – Current leaderboard'
     icon_style = 'Icons128x128_1'
     icon_substyle = 'Statistics'
@@ -108,9 +106,7 @@ class Lvl9ListView(ManualListView):
 
 
 class SummitListView(ManualListView):
-
     app = None
-
     title = 'SUMMIT – Preliminary Round'
     icon_style = 'Icons128x128_1'
     icon_substyle = 'Statistics'
