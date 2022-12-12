@@ -3,7 +3,7 @@ from datetime import date
 import time
 
 from pyplanet.apps.config import AppConfig
-from .views import EventListView
+from .views import Lvl9ListView
 from pyplanet.contrib.command import Command
 from pyplanet.contrib.setting import Setting
 from pyplanet.utils import times
@@ -162,7 +162,7 @@ class ApexEvents(AppConfig):
 
         else:
             if (self.tournament == 'level9' and len(self.tournament_times) > 0) or self.current_map == 10:
-                view = EventListView(self, player.nickname)
+                view = Lvl9ListView(self, player.nickname)
                 await view.display(player.login)
             elif self.tournament == 'level9' and len(self.tournament_times) == 0:
                 await self.instance.chat(
