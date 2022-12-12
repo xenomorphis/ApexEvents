@@ -118,6 +118,7 @@ class SummitListView(ManualListView):
         super().__init__(self)
         self.app = app
         self.manager = app.context.ui
+        self.player_manager = app.instance.player_manager
         self.viewer = viewer
 
     async def get_fields(self):
@@ -151,27 +152,27 @@ class SummitListView(ManualListView):
         items = []
 
         for pos in range(1, len(self.app.tournament_pos) + 1):
-            player = self.app.tournament_pos[pos]
-            player_points = self.app.tournament_players[player]
+            player_login = self.app.tournament_pos[pos]
+            player_points = self.app.tournament_players[player_login]
 
             if pos < 13:
-                if player == self.viewer:
+                if player_login == self.viewer:
                     items.append({'pos': '$1EF' + str(pos),
-                                  'player_name': player,
+                                  'player_name': self.app.tournament_player_names[player_login],
                                   'points': '$1EF' + str(player_points)})
                 else:
                     items.append({'pos': pos,
-                                  'player_name': player,
+                                  'player_name': self.app.tournament_player_names[player_login],
                                   'points': str(player_points)})
 
             else:
-                if player == self.viewer:
+                if player_login == self.viewer:
                     items.append({'pos': '$1EF' + str(pos),
-                                  'player_name': player,
+                                  'player_name': self.app.tournament_player_names[player_login],
                                   'points': '$1EF' + str(player_points)})
                 else:
                     items.append({'pos': '$D00' + str(pos),
-                                  'player_name': player,
+                                  'player_name': self.app.tournament_player_names[player_login],
                                   'points': '$D00' + str(player_points)})
 
         return items
