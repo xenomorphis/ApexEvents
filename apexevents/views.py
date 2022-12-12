@@ -107,7 +107,7 @@ class Lvl9ListView(ManualListView):
         return items
 
 
-class Lvl9ListView(ManualListView):
+class SummitListView(ManualListView):
 
     app = None
 
