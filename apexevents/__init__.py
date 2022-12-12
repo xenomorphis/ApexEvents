@@ -29,6 +29,7 @@ class ApexEvents(AppConfig):
         self.finished_maps = dict()
         self.tournament_day = ''
         self.tournament_locked = False
+        self.tournament_player_names = dict()
         self.tournament_players = dict()
         self.tournament_players_amt = 0
         self.tournament_pos = dict()
@@ -101,6 +102,7 @@ class ApexEvents(AppConfig):
             self.tournament_locked = False
             self.admin = player
             self.tournament_players_amt = 0
+            self.tournament_player_names.clear()
             self.tournament_players.clear()
 
             current_script = (await self.instance.mode_manager.get_current_script()).lower()
@@ -137,6 +139,7 @@ class ApexEvents(AppConfig):
             self.admin = None
             self.current_map = -1
             self.tournament_players_amt = 0
+            self.tournament_player_names.clear()
             self.tournament_players.clear()
             await self.instance.chat('$s$FB3Auto$FFFModerator: Tournament successfully cleared!', player)
 
@@ -176,7 +179,7 @@ class ApexEvents(AppConfig):
 
     async def summit_rank(self, player, data, **kwargs):
         if self.tournament_locked and self.tournament == 'summit' and self.current_map < 4:
-            view = SummitListView(self, player.nickname)
+            view = SummitListView(self, player.login)
             await view.display(player.login)
         elif self.tournament == 'summit' and self.current_map == 1 and not self.tournament_locked:
             await self.instance.chat(
@@ -499,6 +502,8 @@ class ApexEvents(AppConfig):
 
             for player in participants:
                 self.tournament_players[player] = 0
+                player_object = self.instance.player_manager.get_player(player)
+                self.tournament_player_names[player] = player_object.nickname
 
     async def debug(self, player, data, **kwargs):
         await self.instance.chat('$FFFCurrent ranking ({}): $F00{}'.format(len(self.tournament_pos), str(self.tournament_pos)), player)
