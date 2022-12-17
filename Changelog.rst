@@ -4,6 +4,12 @@ ApexEvents
 
 Changelog
 -----------
+``0.5.0``
+    | Update: [SUMMIT] Adds a user interface used for displaying the current leaderboard during the
+      SUMMIT preliminaries
+    | Update: [SUMMIT] Improves the AutoModerator chat messages
+    | Fix: [SUMMIT] Adds missing await statements when using coroutines from the player_manager class
+
 ``0.4.2``
     | Update: [LEVEL9] Adds the new column 'maps_finished' to the leaderboard UI
 
