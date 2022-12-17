@@ -25,6 +25,7 @@ class ApexEvents(AppConfig):
         self.admin = None
         self.tournament = ''
         self.current_map = -1
+        self.is_warmup = False
         self.map_times = dict()
         self.finished_maps = dict()
         self.tournament_day = ''
@@ -72,6 +73,7 @@ class ApexEvents(AppConfig):
         self.context.signals.listen(tm_signals.finish, self.player_finish)
         self.context.signals.listen(tm_signals.scores, self.scores)
         self.context.signals.listen(tm_signals.warmup_end, self.warmup_end)
+        self.context.signals.listen(tm_signals.warmup_start, self.warmup_start)
 
         await self.context.setting.register(self.setting_summit_autodnq_players)
 
@@ -203,7 +205,7 @@ class ApexEvents(AppConfig):
                                      .format(url_block), player)
 
     async def apexevents_info(self, player, data, **kwargs):
-        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.5.0-4', player)
+        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.5.0-5', player)
 
         if self.tournament == 'level9' or self.current_map == 10:
             await self.instance.chat('$s$1EF/lvl9$FFF: $iGet your current ranking information.', player)
@@ -475,10 +477,10 @@ class ApexEvents(AppConfig):
     async def scores(self, section, players, **kwargs):
         if self.tournament == 'summit':
             if 0 < self.current_map < 4:
-                if section == 'EndMap':
+                if section == 'PreEndRound' and not self.is_warmup:
                     for player in players:
-                        if ('map_points' in player) and (player['player'].login in self.tournament_players):
-                            self.tournament_players[player['player'].login] += player['map_points']
+                        if ('round_points' in player) and (player['player'].login in self.tournament_players):
+                            self.tournament_players[player['player'].login] += player['round_points']
 
                     positions = sorted(self.tournament_players, key=self.tournament_players.get, reverse=True)
                     self.tournament_pos = {rank: key for rank, key in enumerate(positions, 1)}
@@ -493,6 +495,8 @@ class ApexEvents(AppConfig):
                     self.tournament_pos = {rank: key for rank, key in enumerate(positions, 1)}
 
     async def warmup_end(self):
+        self.is_warmup = False
+
         if self.tournament == 'summit' and self.current_map == 1 and not self.tournament_locked:
             self.tournament_locked = True
 
@@ -504,6 +508,9 @@ class ApexEvents(AppConfig):
                 self.tournament_players[player] = 0
                 player_object = await self.instance.player_manager.get_player(player)
                 self.tournament_player_names[player] = player_object.nickname
+
+    async def warmup_start(self):
+        self.is_warmup = True
 
     async def debug(self, player, data, **kwargs):
         await self.instance.chat('$FFFCurrent ranking ({}): $F00{}'.format(len(self.tournament_pos), str(self.tournament_pos)), player)
