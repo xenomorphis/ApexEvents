@@ -1,4 +1,5 @@
 from datetime import date
+from pyplanet.views import TemplateView
 from pyplanet.views.generics.list import ManualListView
 from pyplanet.utils import times
 
@@ -176,3 +177,33 @@ class SummitListView(ManualListView):
                                   'points': '$D00' + str(player_points)})
 
         return items
+
+
+class EventToolbar(TemplateView):
+    template_name = 'apexevents/event_toolbar.xml'
+
+    def __init__(self, app, *args, **kwargs):
+        """
+        :param app: App instance.
+        :type app: pyplanet.apps.contrib.info.Info
+        """
+        super().__init__(*args, **kwargs)
+        self.app = app
+        self.commands = {
+            'results_level9': '/lvl9rank 1',
+            'results_summit': '/summitrank',
+        }
+        self.id = 'apexevents'
+        self.manager = self.app.context.ui
+
+    async def get_context_data(self):
+        context = await super().get_context_data()
+        return context
+
+    async def handle_catch_all(self, player, action, values, **kwargs):
+        action += '_' + self.app.tournament
+
+        if action not in self.commands:
+            return
+
+        await self.app.instance.command_manager.execute(player, self.commands[action])

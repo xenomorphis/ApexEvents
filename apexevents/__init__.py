@@ -76,6 +76,7 @@ class ApexEvents(AppConfig):
         self.context.signals.listen(tm_signals.warmup_start, self.warmup_start)
 
         await self.context.setting.register(self.setting_summit_autodnq_players)
+        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Management System v$FF00.5.0 online')
 
     async def level9_start(self, player, data, **kwargs):
         if self.tournament == '':
@@ -205,7 +206,7 @@ class ApexEvents(AppConfig):
                                      .format(url_block), player)
 
     async def apexevents_info(self, player, data, **kwargs):
-        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.5.0-5', player)
+        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.5.0-6', player)
 
         if self.tournament == 'level9' or self.current_map == 10:
             await self.instance.chat('$s$1EF/lvl9$FFF: $iGet your current ranking information.', player)
