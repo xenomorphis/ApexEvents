@@ -490,7 +490,7 @@ class ApexEvents(AppConfig):
                     positions = sorted(self.tournament_players, key=self.tournament_players.get, reverse=True)
                     self.tournament_pos = {rank: key for rank, key in enumerate(positions, 1)}
 
-        if self.tournament == 'summit_test':
+        if self.tournament == 'summit_test' and self.current_map > 0:
             if section == 'PreEndRound' and not self.is_warmup:
                 for player in players:
                     if ('round_points' in player) and (player['player'].login in self.tournament_players):
