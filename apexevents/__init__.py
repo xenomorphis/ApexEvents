@@ -240,6 +240,8 @@ class ApexEvents(AppConfig):
             await self.instance.chat('$s$1EF//summitclear$FFF: $iClear an ongoing SUMMIT event.', player)
 
     async def map_begin(self, map, **kwargs):
+        current_players = self.instance.player_manager.count_players
+
         if self.current_map > -1:
             time.sleep(5)
 
@@ -281,24 +283,28 @@ class ApexEvents(AppConfig):
                     time.sleep(6)
 
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFPreliminary Round {}/3'.format(self.current_map))
-                if self.tournament_players_amt > 17:
+                if self.tournament_players_amt > 17 and current_players > 14:
                     await self.instance.chat('$s$1EFQualification condition: $FFFBe upon the Top 14 players with the most total points after Map 3.')
-                elif self.tournament_players_amt > 12:
+                elif self.tournament_players_amt > 12 and current_players > 12:
                     await self.instance.chat('$s$1EFQualification condition: $FFFBe upon the Top 12 players with the most total points after Map 3.')
 
             elif self.current_map == 4:
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFElimination Round 1')
-                if self.tournament_players_amt > 17:
+                if self.tournament_players_amt > 17 and current_players > 12:
                     await self.instance.chat('$s$1EFEliminations: $FFFLast three players at the end of this map.')
-                elif self.tournament_players_amt > 12:
+                elif self.tournament_players_amt > 12 and current_players > 11:
                     await self.instance.chat('$s$1EFEliminations: $FFFLast two players at the end of this map.')
+                elif current_players == 11:
+                    await self.instance.chat('$s$1EFEliminations: $FFFLast player at the end of this map.')
 
             elif self.current_map == 5:
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFElimination Round 2')
-                if self.tournament_players_amt > 17:
+                if self.tournament_players_amt > 17 and current_players > 10:
                     await self.instance.chat('$s$1EFEliminations: $FFFLast three players at the end of this map.')
-                elif self.tournament_players_amt > 12:
+                elif self.tournament_players_amt > 12 and current_players > 9:
                     await self.instance.chat('$s$1EFEliminations: $FFFLast two players at the end of this map.')
+                elif current_players == 9:
+                    await self.instance.chat('$s$1EFEliminations: $FFFLast player at the end of this map.')
 
             elif self.current_map == 6:
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFSemi-Final')
