@@ -219,7 +219,7 @@ class ApexEvents(AppConfig):
                                      .format(url_block), player)
 
     async def apexevents_info(self, player, data, **kwargs):
-        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.5.0-8', player)
+        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.5.0-9', player)
 
         if self.tournament == 'level9' or self.current_map == 10:
             await self.instance.chat('$s$1EF/lvl9$FFF: $iGet your current ranking information.', player)
@@ -395,14 +395,12 @@ class ApexEvents(AppConfig):
                     await self.instance.chat('$s$1EFPRELIMINARIES | $FFFDNQ\'ed players:')
                     for i in range(players_current, position_ref, -1):
                         player_login_out = self.tournament_pos[i]
-                        if player_login_out in online:
-                            player_out = await self.instance.player_manager.get_player(player_login_out)
-                            await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_out.nickname))
-                            if auto_dnq:
-                                await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
-                        else:
-                            await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_login_out))
 
+                        if (player_login_out in online) and auto_dnq:
+                            await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
+
+                        await self.instance.chat(
+                            '$s$1EFRank {}: $FFF{}'.format(str(i), self.tournament_player_names[player_login_out]))
                         del self.tournament_players[player_login_out]
 
             elif self.current_map == 4:
@@ -418,14 +416,12 @@ class ApexEvents(AppConfig):
                     await self.instance.chat('$s$1EFELIMINATION 1 | $FFFDNQ\'ed players:')
                     for i in range(players_current, qualified, -1):
                         player_login_out = self.tournament_pos[i]
-                        if player_login_out in online:
-                            player_out = await self.instance.player_manager.get_player(player_login_out)
-                            await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_out.nickname))
-                            if auto_dnq:
-                                await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
-                        else:
-                            await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_login_out))
 
+                        if (player_login_out in online) and auto_dnq:
+                            await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
+
+                        await self.instance.chat(
+                            '$s$1EFRank {}: $FFF{}'.format(str(i), self.tournament_player_names[player_login_out]))
                         del self.tournament_players[player_login_out]
 
             elif self.current_map == 5:
@@ -436,14 +432,12 @@ class ApexEvents(AppConfig):
                     await self.instance.chat('$s$1EFELIMINATION 2 | $FFFDNQ\'ed players:')
                     for i in range(players_current, 8, -1):
                         player_login_out = self.tournament_pos[i]
-                        if player_login_out in online:
-                            player_out = await self.instance.player_manager.get_player(player_login_out)
-                            await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_out.nickname))
-                            if auto_dnq:
-                                await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
-                        else:
-                            await self.instance.chat('$s$1EFRank {}: $FFF{}'.format(str(i), player_login_out))
 
+                        if (player_login_out in online) and auto_dnq:
+                            await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
+
+                        await self.instance.chat(
+                            '$s$1EFRank {}: $FFF{}'.format(str(i), self.tournament_player_names[player_login_out]))
                         del self.tournament_players[player_login_out]
 
     async def map_end(self, map, **kwargs):
