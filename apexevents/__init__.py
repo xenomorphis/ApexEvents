@@ -112,6 +112,7 @@ class ApexEvents(AppConfig):
             self.tournament_players_amt = 0
             self.tournament_player_names.clear()
             self.tournament_players.clear()
+            self.tournament_pos.clear()
 
             current_script = (await self.instance.mode_manager.get_current_script()).lower()
 
@@ -149,6 +150,7 @@ class ApexEvents(AppConfig):
             self.tournament_players_amt = 0
             self.tournament_player_names.clear()
             self.tournament_players.clear()
+            self.tournament_pos.clear()
 
             if self.tournament == 'summit':
                 await self.instance.chat('$s$FB3Auto$FFFModerator: Tournament successfully cleared!', player)
