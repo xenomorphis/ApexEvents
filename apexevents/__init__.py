@@ -511,11 +511,14 @@ class ApexEvents(AppConfig):
 
             self.tournament_players_amt = self.instance.player_manager.count_players
             participants = self.instance.player_manager.online_logins
+            pseudo_pos = 1
 
             for player in participants:
                 self.tournament_players[player] = 0
+                self.tournament_pos[pseudo_pos] = player
                 player_object = await self.instance.player_manager.get_player(player)
                 self.tournament_player_names[player] = player_object.nickname
+                pseudo_pos += 1
 
     async def warmup_start(self):
         self.is_warmup = True
