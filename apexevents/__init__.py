@@ -154,6 +154,7 @@ class ApexEvents(AppConfig):
 
             if self.tournament == 'summit':
                 await self.instance.chat('$s$FB3Auto$FFFModerator: Tournament successfully cleared!', player)
+                await self.instance.command_manager.execute(self.admin, '//srvpass', '')
             else:
                 await self.instance.chat('$s$FB3Auto$FFFModerator: SUMMIT test mode deactivated!', player)
 
