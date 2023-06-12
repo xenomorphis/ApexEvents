@@ -4,6 +4,28 @@ from pyplanet.views.generics.list import ManualListView
 from pyplanet.utils import times
 
 
+class EventToolbarView(TemplateView):
+    template_name = 'apexevents/event_toolbar.xml'
+
+    def __init__(self, app):
+        super().__init__(app.context.ui)
+
+        self.app = app
+        self.id = 'apexevents_toolbar'
+
+        self.subscribe('results', self.action_results)
+
+    async def get_context_data(self):
+        data = await super().get_context_data()
+        return data
+
+    async def action_results(self, player, *args, **kwargs):
+        if self.app.tournament == 'summit':
+            return await self.app.instance.command_manager.execute(player, '/summitrank')
+        elif self.app.tournament == 'level9':
+            return await self.app.instance.command_manager.execute(player, '/lvl9rank')
+
+
 class Lvl9ListView(ManualListView):
     app = None
     title = 'LEVEL9 – Current leaderboard'
@@ -177,33 +199,3 @@ class SummitListView(ManualListView):
                                   'points': '$D00' + str(player_points)})
 
         return items
-
-
-class EventToolbar(TemplateView):
-    template_name = 'apexevents/event_toolbar.xml'
-
-    def __init__(self, app, *args, **kwargs):
-        """
-        :param app: App instance.
-        :type app: pyplanet.apps.contrib.info.Info
-        """
-        super().__init__(*args, **kwargs)
-        self.app = app
-        self.commands = {
-            'results_level9': '/lvl9rank 1',
-            'results_summit': '/summitrank',
-        }
-        self.id = 'apexevents'
-        self.manager = self.app.context.ui
-
-    async def get_context_data(self):
-        context = await super().get_context_data()
-        return context
-
-    async def handle_catch_all(self, player, action, values, **kwargs):
-        action += '_' + self.app.tournament
-
-        if action not in self.commands:
-            return
-
-        await self.app.instance.command_manager.execute(player, self.commands[action])
