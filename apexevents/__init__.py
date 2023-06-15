@@ -121,7 +121,7 @@ class ApexEvents(AppConfig):
             self.tournament_pos.clear()
 
             current_script = (await self.instance.mode_manager.get_current_script()).lower()
-            timeout = self.setting_summit_finish_timeout.get_value()
+            timeout = await self.setting_summit_finish_timeout.get_value()
 
             if 'rounds' in current_script:
                 self.current_map = 0
@@ -269,7 +269,7 @@ class ApexEvents(AppConfig):
 
             if self.current_map < 4:
                 if self.current_map == 0:
-                    timeout = self.setting_summit_finish_timeout.get_value()
+                    timeout = await self.setting_summit_finish_timeout.get_value()
 
                     await self.instance.command_manager.execute(self.admin, '//modesettings', 'S_PointsLimit', str(115))
                     await self.instance.command_manager.execute(self.admin, '//modesettings', 'S_FinishTimeout', str(timeout))
@@ -332,7 +332,7 @@ class ApexEvents(AppConfig):
 
         elif self.tournament == 'summit':
             online = self.instance.player_manager.online_logins
-            auto_dnq = self.setting_summit_autodnq_players.get_value()
+            auto_dnq = await self.setting_summit_autodnq_players.get_value()
 
             if self.current_map < 1:
                 time.sleep(5)
