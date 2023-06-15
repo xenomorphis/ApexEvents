@@ -20,9 +20,9 @@ class EventToolbarView(TemplateView):
         return data
 
     async def action_results(self, player, *args, **kwargs):
-        if self.app.tournament == 'summit':
+        if 'summit' in self.app.tournament:
             return await self.app.instance.command_manager.execute(player, '/summitrank')
-        elif self.app.tournament == 'level9':
+        elif 'level9' in self.app.tournament:
             return await self.app.instance.command_manager.execute(player, '/lvl9rank')
 
 

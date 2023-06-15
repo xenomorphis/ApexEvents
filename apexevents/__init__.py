@@ -3,7 +3,7 @@ from datetime import date
 import time
 
 from pyplanet.apps.config import AppConfig
-from .views import Lvl9ListView, SummitListView
+from .views import EventToolbarView, Lvl9ListView, SummitListView
 from pyplanet.contrib.command import Command
 from pyplanet.contrib.setting import Setting
 from pyplanet.utils import times
@@ -36,6 +36,8 @@ class ApexEvents(AppConfig):
         self.tournament_pos = dict()
         self.tournament_times = dict()
         self.tournament_dnf = 0
+
+        self.tournament_widget = EventToolbarView(self)
 
         self.setting_summit_autodnq_players = Setting(
             'summit_automoderate_players', 'Defines if DNQs should be handled automatically by ApexEvents.', Setting.CAT_BEHAVIOUR, type=bool,
@@ -140,6 +142,7 @@ class ApexEvents(AppConfig):
             self.tournament_times.clear()
             self.tournament_dnf = 0
 
+            await self.tournament_widget.hide()
             await self.instance.chat('$s$FB3Auto$FFFModerator: Tournament successfully cleared!', player)
 
     async def summit_clear(self, player, data, **kwargs):
@@ -151,6 +154,8 @@ class ApexEvents(AppConfig):
             self.tournament_player_names.clear()
             self.tournament_players.clear()
             self.tournament_pos.clear()
+
+            await self.tournament_widget.hide()
 
             if self.tournament == 'summit':
                 await self.instance.chat('$s$FB3Auto$FFFModerator: Tournament successfully cleared!', player)
@@ -220,7 +225,7 @@ class ApexEvents(AppConfig):
                                      .format(url_block), player)
 
     async def apexevents_info(self, player, data, **kwargs):
-        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.5.0-9', player)
+        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.5.0-11', player)
 
         if self.tournament == 'level9' or self.current_map == 10:
             await self.instance.chat('$s$1EF/lvl9$FFF: $iGet your current ranking information.', player)
@@ -255,6 +260,9 @@ class ApexEvents(AppConfig):
                     self.current_map += 1
                     time.sleep(6)
 
+                if self.current_map == 2:
+                    await self.tournament_widget.display()
+
                 await self.instance.chat('$s$FFFMap {}/9: {}'.format(self.current_map, map.name))
 
                 all_online = self.instance.player_manager.online
@@ -271,7 +279,11 @@ class ApexEvents(AppConfig):
             elif self.current_map == 10:
                 await self.instance.chat('$s$FFFThe tournament has concluded. You can view the final results via the '
                                          'command $FB1/lvl9$FFF. Thx for playing and see \'ya next time!')
-                self.tournament = ''
+                self.tournament = 'level9-ended'
+
+        elif self.tournament == 'level9-ended':
+            await self.tournament_widget.hide()
+            self.tournament = ''
 
         elif self.tournament == 'summit':
             self.current_map += 1
@@ -283,14 +295,20 @@ class ApexEvents(AppConfig):
                     self.current_map += 1
                     time.sleep(6)
 
+                if self.current_map == 1:
+                    await self.tournament_widget.display()
+
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFPreliminary Round {}/3'.format(self.current_map))
+
                 if self.tournament_players_amt > 17 and current_players > 14:
                     await self.instance.chat('$s$1EFQualification condition: $FFFBe upon the Top 14 players with the most total points after Map 3.')
                 elif self.tournament_players_amt > 12 and current_players > 12:
                     await self.instance.chat('$s$1EFQualification condition: $FFFBe upon the Top 12 players with the most total points after Map 3.')
 
             elif self.current_map == 4:
+                await self.tournament_widget.hide()
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFElimination Round 1')
+
                 if self.tournament_players_amt > 17 and current_players > 12:
                     await self.instance.chat('$s$1EFEliminations: $FFFLast three players at the end of this map.')
                 elif self.tournament_players_amt > 12 and current_players > 11:
@@ -300,6 +318,7 @@ class ApexEvents(AppConfig):
 
             elif self.current_map == 5:
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFElimination Round 2')
+
                 if self.tournament_players_amt > 17 and current_players > 10:
                     await self.instance.chat('$s$1EFEliminations: $FFFLast three players at the end of this map.')
                 elif self.tournament_players_amt > 12 and current_players > 9:
