@@ -173,12 +173,18 @@ class SummitListView(ManualListView):
 
     async def get_data(self):
         items = []
+        players_current = len(self.app.tournament_pos)
+
+        if players_current > 17:
+            q_limit = 15
+        else:
+            q_limit = 13
 
         for pos in range(1, len(self.app.tournament_pos) + 1):
             player_login = self.app.tournament_pos[pos]
             player_points = self.app.tournament_players[player_login]
 
-            if pos < 13:
+            if pos < q_limit:
                 if player_login == self.viewer:
                     items.append({'pos': '$1EF' + str(pos),
                                   'player_name': self.app.tournament_player_names[player_login],
