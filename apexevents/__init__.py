@@ -41,8 +41,13 @@ class ApexEvents(AppConfig):
 
         self.setting_summit_autodnq_players = Setting(
             'summit_automoderate_players', 'Defines if DNQs should be handled automatically by ApexEvents.', Setting.CAT_BEHAVIOUR, type=bool,
-            description='Defines if DNQs should be handled automatically by ApexEvents.',
-            default=False,
+            description='Defines if DNQs should be handled automatically by ApexEvents.', default=False,
+        )
+
+        self.setting_summit_finish_timeout = Setting(
+            'summit_finish_timeout', 'Defines the amount of time left to finish a map (in seconds).',
+            Setting.CAT_BEHAVIOUR, type=int,
+            description='Defines the amount of time left to finish a map (in seconds).', default=15,
         )
 
     async def on_start(self):
@@ -77,7 +82,7 @@ class ApexEvents(AppConfig):
         self.context.signals.listen(tm_signals.warmup_end, self.warmup_end)
         self.context.signals.listen(tm_signals.warmup_start, self.warmup_start)
 
-        await self.context.setting.register(self.setting_summit_autodnq_players)
+        await self.context.setting.register(self.setting_summit_autodnq_players, self.setting_summit_finish_timeout)
         await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Management System v$FF00.5.0 online')
 
     async def level9_start(self, player, data, **kwargs):
@@ -116,11 +121,12 @@ class ApexEvents(AppConfig):
             self.tournament_pos.clear()
 
             current_script = (await self.instance.mode_manager.get_current_script()).lower()
+            timeout = self.setting_summit_finish_timeout.get_value()
 
             if 'rounds' in current_script:
                 self.current_map = 0
                 await self.instance.command_manager.execute(player, '//modesettings', 'S_PointsLimit', str(115))
-                await self.instance.command_manager.execute(player, '//modesettings', 'S_FinishTimeout', str(15))
+                await self.instance.command_manager.execute(player, '//modesettings', 'S_FinishTimeout', str(timeout))
             else:
                 self.current_map = -1
                 await self.instance.command_manager.execute(player, '//mode', 'rounds')
@@ -199,7 +205,7 @@ class ApexEvents(AppConfig):
                                      .format(url_block), player)
 
     async def apexevents_info(self, player, data, **kwargs):
-        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.5.0-11', player)
+        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.5.0-12', player)
 
         if self.tournament == 'level9' or self.current_map == 10:
             await self.instance.chat('$s$1EF/lvl9$FFF: $iGet the current leaderboard (updated after each map).', player)
@@ -263,8 +269,10 @@ class ApexEvents(AppConfig):
 
             if self.current_map < 4:
                 if self.current_map == 0:
+                    timeout = self.setting_summit_finish_timeout.get_value()
+
                     await self.instance.command_manager.execute(self.admin, '//modesettings', 'S_PointsLimit', str(115))
-                    await self.instance.command_manager.execute(self.admin, '//modesettings', 'S_FinishTimeout', str(15))
+                    await self.instance.command_manager.execute(self.admin, '//modesettings', 'S_FinishTimeout', str(timeout))
                     self.current_map += 1
                     time.sleep(6)
 
