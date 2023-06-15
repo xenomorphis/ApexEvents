@@ -153,7 +153,6 @@ class ApexEvents(AppConfig):
     async def summit_clear(self, player, data, **kwargs):
         if self.tournament in ['summit', 'summit_test']:
             self.tournament_locked = False
-            self.admin = None
             self.current_map = -1
             self.tournament_players_amt = 0
             self.tournament_player_names.clear()
@@ -168,6 +167,7 @@ class ApexEvents(AppConfig):
             else:
                 await self.instance.chat('$s$FB3Auto$FFFModerator: SUMMIT test mode deactivated!', player)
 
+            self.admin = None
             self.tournament = ''
 
     async def level9_rank(self, player, data, **kwargs):
@@ -205,7 +205,7 @@ class ApexEvents(AppConfig):
                                      .format(url_block), player)
 
     async def apexevents_info(self, player, data, **kwargs):
-        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.5.0-12', player)
+        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.5.0-13', player)
 
         if self.tournament == 'level9' or self.current_map == 10:
             await self.instance.chat('$s$1EF/lvl9$FFF: $iGet the current leaderboard (updated after each map).', player)
