@@ -503,6 +503,9 @@ class ApexEvents(AppConfig):
                 self.tournament_pos = {rank: key for rank, key in enumerate(positions, 1)}
                 await self.debug(self.admin, '')
 
+    async def warmup_start(self):
+        self.is_warmup = True
+
     async def warmup_end(self):
         self.is_warmup = False
 
@@ -522,9 +525,6 @@ class ApexEvents(AppConfig):
                 player_object = await self.instance.player_manager.get_player(player)
                 self.tournament_player_names[player] = player_object.nickname
                 pseudo_pos += 1
-
-    async def warmup_start(self):
-        self.is_warmup = True
 
     async def debug(self, player, data, **kwargs):
         await self.instance.chat('$FFFCurrent ranking ({}): $F00{}'.format(len(self.tournament_pos), str(self.tournament_pos)), player)
