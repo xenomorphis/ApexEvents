@@ -5,10 +5,17 @@ ApexEvents
 Changelog
 -----------
 ``0.5.0``
+    | Feature: [GENERAL] Adds tournament toolbar
     | Update: [SUMMIT] Adds a user interface used for displaying the current leaderboard during the
       SUMMIT preliminaries
+    | Update: [SUMMIT] Adds a configuration option for adjusting the finish timeout
     | Update: [SUMMIT] Improves the AutoModerator chat messages
-    | Fix: [SUMMIT] Adds missing await statements when using coroutines from the player_manager class
+    | Update: [SUMMIT] Automatically remove the server password when clearing the tournament
+    | Update: [LEVEL9] Removes chat-based leaderboard information available via the ``/lvl9rank`` command
+    | Fix: [SUMMIT] Missing ``await`` statements when using coroutines from the player_manager class
+    | Fix: [SUMMIT] Inaccessible settings values due to missing ``await`` statements
+    | Fix: [LEVEL9] Players disconnecting during the tournament get their 'maps_finished' counter resetted
+      if they rejoin on a later map
 
 ``0.4.2``
     | Update: [LEVEL9] Adds the new column 'maps_finished' to the leaderboard UI
