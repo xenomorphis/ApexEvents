@@ -354,6 +354,7 @@ class ApexEvents(AppConfig):
                 for player in self.tournament_players.keys():
                     if len(self.tournament_pos) > 12:
                         diff_to_q = self.tournament_players[player] - points_ref
+
                         if diff_to_q > 0:
                             colorcode = '$3C0+'
                         else:
@@ -373,14 +374,15 @@ class ApexEvents(AppConfig):
                     player_ref = self.tournament_pos[14]
                     points_ref = self.tournament_players[player_ref]
                     position_ref = 14
-                elif players_current > 12:
+                else:
                     player_ref = self.tournament_pos[12]
                     points_ref = self.tournament_players[player_ref]
                     position_ref = 12
 
                 for player in self.tournament_players.keys():
-                    if players_current > 12:
+                    if players_current > position_ref:
                         diff_to_q = self.tournament_players[player] - points_ref
+
                         if diff_to_q > 0:
                             colorcode = '$3C0+'
                         else:
@@ -395,10 +397,15 @@ class ApexEvents(AppConfig):
 
                 time.sleep(5)
 
-                if players_current > 12:
+                if players_current > position_ref:
                     await self.instance.chat('$s$1EFPRELIMINARIES | $FFFDNQ\'ed players:')
                     for i in range(players_current, position_ref, -1):
                         player_login_out = self.tournament_pos[i]
+
+                        if self.tournament_players[player_login_out] == self.tournament_players[self.tournament_pos[position_ref]]:
+                            await self.instance.chat('$s$1EFNo further eliminations because of tied ranks. Expect more '
+                                                     'eliminations next round instead.')
+                            break
 
                         if (player_login_out in online) and auto_dnq:
                             await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
@@ -421,6 +428,11 @@ class ApexEvents(AppConfig):
                     for i in range(players_current, qualified, -1):
                         player_login_out = self.tournament_pos[i]
 
+                        if self.tournament_players[player_login_out] == self.tournament_players[self.tournament_pos[qualified]]:
+                            await self.instance.chat('$s$1EFNo further eliminations because of tied ranks. Expect more '
+                                                     'eliminations next round instead.')
+                            break
+
                         if (player_login_out in online) and auto_dnq:
                             await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
 
@@ -436,6 +448,11 @@ class ApexEvents(AppConfig):
                     await self.instance.chat('$s$1EFELIMINATION 2 | $FFFDNQ\'ed players:')
                     for i in range(players_current, 8, -1):
                         player_login_out = self.tournament_pos[i]
+
+                        if self.tournament_players[player_login_out] == self.tournament_players[self.tournament_pos[8]]:
+                            await self.instance.chat('$s$1EFNo further eliminations because of tied ranks. Expect more '
+                                                     'eliminations next round instead.')
+                            break
 
                         if (player_login_out in online) and auto_dnq:
                             await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
