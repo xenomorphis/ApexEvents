@@ -318,9 +318,6 @@ class ApexEvents(AppConfig):
                     await self.instance.chat(
                         '$s$1EFEliminations: $FFFLast player per run starting with the fourth run.')
 
-                for player in self.tournament_players:
-                    self.tournament_players[player] = 0
-
             elif self.current_map == 7:
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFFinal')
 
@@ -469,6 +466,26 @@ class ApexEvents(AppConfig):
                             '$s$1EFRank {}: $FFF{}'.format(str(i), self.tournament_player_names[player_login_out]))
                         del self.tournament_players[player_login_out]
 
+            elif self.current_map == 6:
+                time.sleep(7.5)
+                players_current = len(self.tournament_pos)
+
+                if players_current > 6:
+                    await self.instance.chat('$s$1EFSEMI-FINAL | $FFFDNQ\'ed players:')
+                    for i in range(players_current, 6, -1):
+                        player_login_out = self.tournament_pos[i]
+
+                        if self.tournament_players[player_login_out] == self.tournament_players[self.tournament_pos[6]]:
+                            await self.instance.chat('$s$1EFNo further eliminations because of tied ranks.')
+                            break
+
+                        if (player_login_out in online) and auto_dnq:
+                            await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
+
+                        await self.instance.chat(
+                            '$s$1EFRank {}: $FFF{}'.format(str(i), self.tournament_player_names[player_login_out]))
+                        del self.tournament_players[player_login_out]
+
     async def map_end(self, map, **kwargs):
         if self.tournament == 'level9':
             if self.current_map > 0:
@@ -513,6 +530,23 @@ class ApexEvents(AppConfig):
                     self.tournament_pos = {rank: key for rank, key in enumerate(positions, 1)}
 
                     if self.current_map == 6:
+                        rank = len(self.tournament_pos)
+
+                        if self.current_run > 3 and rank > 4:
+                            online = self.instance.player_manager.online_logins
+                            auto_dnq = await self.setting_summit_autodnq_players.get_value()
+                            dnq_player = self.tournament_players[rank]
+
+                            await self.instance.chat('$s$1EFSEMI-FINAL | $FFFDNQ\'ed player:')
+
+                            if (dnq_player in online) and auto_dnq:
+                                await self.instance.command_manager.execute(self.admin, '//forcespec', dnq_player)
+
+                            await self.instance.chat(
+                                '$s$1EFRank {}: $FFF{}'.format(str(rank), self.tournament_player_names[dnq_player]))
+
+                            del self.tournament_players[rank]
+
                         self.current_run += 1
 
             elif self.current_map > 3:
@@ -556,6 +590,10 @@ class ApexEvents(AppConfig):
                 player_object = await self.instance.player_manager.get_player(player)
                 self.tournament_player_names[player] = player_object.nickname
                 pseudo_pos += 1
+
+        if self.tournament == 'summit' and self.current_map == 6:
+            for player in self.tournament_players:
+                self.tournament_players[player] = 0
 
     async def debug(self, player, data, **kwargs):
         await self.instance.chat('$FFFCurrent ranking ({}): $F00{}'.format(len(self.tournament_pos), str(self.tournament_pos)), player)
