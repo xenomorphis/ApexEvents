@@ -208,7 +208,7 @@ class ApexEvents(AppConfig):
                                      .format(url_block), player)
 
     async def apexevents_info(self, player, data, **kwargs):
-        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.5.0-16', player)
+        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.5.1-0', player)
 
         if self.tournament == 'level9' or self.current_map == 10:
             await self.instance.chat('$s$1EF/lvl9$FFF: $iGet the current leaderboard (updated after each map).', player)
@@ -269,6 +269,8 @@ class ApexEvents(AppConfig):
 
         elif self.tournament == 'summit':
             self.current_map += 1
+            qualified = 0
+            message_condition = ' at the end of the map'
 
             if self.current_map < 4:
                 if self.current_map == 0:
@@ -283,29 +285,25 @@ class ApexEvents(AppConfig):
                     await self.tournament_widget.display()
 
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFPreliminary Round {}/3'.format(self.current_map))
+                message_condition = ' with the most total points after Map 3'
 
-                if self.tournament_players_amt > 17 and current_players > 14:
-                    await self.instance.chat(
-                        '$s$1EFQualification condition: $FFFBe upon the Top 14 players with the most total points after Map 3.')
-                elif self.tournament_players_amt > 12 and current_players > 12:
-                    await self.instance.chat(
-                        '$s$1EFQualification condition: $FFFBe upon the Top 12 players with the most total points after Map 3.')
+                if self.tournament_players_amt > 17:
+                    qualified = 14
+                else:
+                    qualified = 12
 
             elif self.current_map == 4:
                 await self.tournament_widget.hide()
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFElimination Round 1')
 
-                if self.tournament_players_amt > 17 and current_players > 12:
-                    await self.instance.chat(
-                        '$s$1EFQualification condition: $FFFBe upon the Top 11 players at the end of the map.')
-                elif self.tournament_players_amt > 12 and current_players > 11:
-                    await self.instance.chat(
-                        '$s$1EFQualification condition: $FFFBe upon the Top 10 players at the end of the map.')
+                if current_players > 13:
+                    qualified = 11
+                else:
+                    qualified = 10
 
             elif self.current_map == 5:
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFElimination Round 2')
-                await self.instance.chat(
-                    '$s$1EFQualification condition: $FFFBe upon the Top 8 players at the end of the map.')
+                qualified = 8
 
             elif self.current_map == 6:
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFSemi-Final')
@@ -325,6 +323,10 @@ class ApexEvents(AppConfig):
                 self.tournament_locked = False
                 self.tournament = ''
                 await self.instance.command_manager.execute(self.admin, '//srvpass')
+
+            if qualified > 0:
+                await self.instance.chat('$s$1EFQualification condition: $FFFBe upon the Top {} players{}.'
+                                         .format(str(qualified), message_condition))
 
         elif self.tournament == 'summit_test':
             self.current_map += 1
