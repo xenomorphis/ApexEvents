@@ -342,17 +342,19 @@ class ApexEvents(AppConfig):
                 await self.instance.chat('$s$1EFAuto$FFFModerator: Get ready for... $16FTH$18FE S$1AFU$1BFM$1CFM$1DFI$1EFT')
             elif self.current_map < 3:
                 time.sleep(5)
-                if len(self.tournament_pos) > 17:
+                players_current = len(self.tournament_pos)
+
+                if players_current > 17:
                     player_ref = self.tournament_pos[14]
                     points_ref = self.tournament_players[player_ref]
                     position_ref = 14
-                elif len(self.tournament_pos) > 12:
+                else:
                     player_ref = self.tournament_pos[12]
                     points_ref = self.tournament_players[player_ref]
                     position_ref = 12
 
-                for player in self.tournament_players.keys():
-                    if len(self.tournament_pos) > 12:
+                for player in self.tournament_players:
+                    if players_current > position_ref:
                         diff_to_q = self.tournament_players[player] - points_ref
 
                         if diff_to_q > 0:
@@ -379,7 +381,7 @@ class ApexEvents(AppConfig):
                     points_ref = self.tournament_players[player_ref]
                     position_ref = 12
 
-                for player in self.tournament_players.keys():
+                for player in self.tournament_players:
                     if players_current > position_ref:
                         diff_to_q = self.tournament_players[player] - points_ref
 
