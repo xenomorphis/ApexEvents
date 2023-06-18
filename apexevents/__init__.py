@@ -208,7 +208,7 @@ class ApexEvents(AppConfig):
                                      .format(url_block), player)
 
     async def apexevents_info(self, player, data, **kwargs):
-        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.5.0-15', player)
+        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.5.0-16', player)
 
         if self.tournament == 'level9' or self.current_map == 10:
             await self.instance.chat('$s$1EF/lvl9$FFF: $iGet the current leaderboard (updated after each map).', player)
@@ -419,72 +419,40 @@ class ApexEvents(AppConfig):
                             '$s$1EFRank {}: $FFF{}'.format(str(i), self.tournament_player_names[player_login_out]))
                         del self.tournament_players[player_login_out]
 
-            elif self.current_map == 4:
+            elif 3 < self.current_map < 7:
                 time.sleep(7.5)
                 players_current = len(self.tournament_pos)
 
-                if players_current > 10:
+                if self.current_map == 4:
+                    dnq_message = '$s$1EFELIMINATION 1 | '
+
                     if players_current > 13:
                         qualified = 11
                     else:
                         qualified = 10
 
-                    await self.instance.chat('$s$1EFELIMINATION 1 | $FFFDNQ\'ed players:')
+                elif self.current_map == 5:
+                    dnq_message = '$s$1EFELIMINATION 2 | '
+                    qualified = 8
+                else:
+                    dnq_message = '$s$1EFSEMI-FINAL | '
+                    qualified = 6
+
+                if players_current > qualified:
+                    await self.instance.chat('{}$FFFDNQ\'ed players:'.format(dnq_message))
                     for i in range(players_current, qualified, -1):
-                        player_login_out = self.tournament_pos[i]
+                        dnq_player = self.tournament_pos[i]
 
-                        if self.tournament_players[player_login_out] == self.tournament_players[self.tournament_pos[qualified]]:
-                            await self.instance.chat('$s$1EFNo further eliminations because of tied ranks. Expect more '
-                                                     'eliminations next round instead.')
-                            break
-
-                        if (player_login_out in online) and auto_dnq:
-                            await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
-
-                        await self.instance.chat(
-                            '$s$1EFRank {}: $FFF{}'.format(str(i), self.tournament_player_names[player_login_out]))
-                        del self.tournament_players[player_login_out]
-
-            elif self.current_map == 5:
-                time.sleep(7.5)
-                players_current = len(self.tournament_pos)
-
-                if players_current > 8:
-                    await self.instance.chat('$s$1EFELIMINATION 2 | $FFFDNQ\'ed players:')
-                    for i in range(players_current, 8, -1):
-                        player_login_out = self.tournament_pos[i]
-
-                        if self.tournament_players[player_login_out] == self.tournament_players[self.tournament_pos[8]]:
-                            await self.instance.chat('$s$1EFNo further eliminations because of tied ranks. Expect more '
-                                                     'eliminations next round instead.')
-                            break
-
-                        if (player_login_out in online) and auto_dnq:
-                            await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
-
-                        await self.instance.chat(
-                            '$s$1EFRank {}: $FFF{}'.format(str(i), self.tournament_player_names[player_login_out]))
-                        del self.tournament_players[player_login_out]
-
-            elif self.current_map == 6:
-                time.sleep(7.5)
-                players_current = len(self.tournament_pos)
-
-                if players_current > 6:
-                    await self.instance.chat('$s$1EFSEMI-FINAL | $FFFDNQ\'ed players:')
-                    for i in range(players_current, 6, -1):
-                        player_login_out = self.tournament_pos[i]
-
-                        if self.tournament_players[player_login_out] == self.tournament_players[self.tournament_pos[6]]:
+                        if self.tournament_players[dnq_player] == self.tournament_players[self.tournament_pos[qualified]]:
                             await self.instance.chat('$s$1EFNo further eliminations because of tied ranks.')
                             break
 
-                        if (player_login_out in online) and auto_dnq:
-                            await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
+                        if (dnq_player in online) and auto_dnq:
+                            await self.instance.command_manager.execute(self.admin, '//forcespec', dnq_player)
 
                         await self.instance.chat(
-                            '$s$1EFRank {}: $FFF{}'.format(str(i), self.tournament_player_names[player_login_out]))
-                        del self.tournament_players[player_login_out]
+                            '$s$1EFRank {}: $FFF{}'.format(str(i), self.tournament_player_names[dnq_player]))
+                        del self.tournament_players[dnq_player]
 
     async def map_end(self, map, **kwargs):
         if self.tournament == 'level9':
