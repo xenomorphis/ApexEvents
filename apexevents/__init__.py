@@ -25,6 +25,7 @@ class ApexEvents(AppConfig):
         self.admin = None
         self.tournament = ''
         self.current_map = -1
+        self.current_run = 1
         self.is_warmup = False
         self.map_times = dict()
         self.finished_maps = dict()
@@ -115,6 +116,7 @@ class ApexEvents(AppConfig):
 
             self.tournament_locked = False
             self.admin = player
+            self.current_run = 1
             self.tournament_players_amt = 0
             self.tournament_player_names.clear()
             self.tournament_players.clear()
@@ -154,6 +156,7 @@ class ApexEvents(AppConfig):
         if self.tournament in ['summit', 'summit_test']:
             self.tournament_locked = False
             self.current_map = -1
+            self.current_run = 1
             self.tournament_players_amt = 0
             self.tournament_player_names.clear()
             self.tournament_players.clear()
@@ -205,7 +208,7 @@ class ApexEvents(AppConfig):
                                      .format(url_block), player)
 
     async def apexevents_info(self, player, data, **kwargs):
-        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.5.0-14', player)
+        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.5.0-15', player)
 
         if self.tournament == 'level9' or self.current_map == 10:
             await self.instance.chat('$s$1EF/lvl9$FFF: $iGet the current leaderboard (updated after each map).', player)
@@ -314,6 +317,9 @@ class ApexEvents(AppConfig):
                 else:
                     await self.instance.chat(
                         '$s$1EFEliminations: $FFFLast player per run starting with the fourth run.')
+
+                for player in self.tournament_players:
+                    self.tournament_players[player] = 0
 
             elif self.current_map == 7:
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFFinal')
@@ -497,7 +503,7 @@ class ApexEvents(AppConfig):
 
     async def scores(self, section, players, **kwargs):
         if self.tournament == 'summit':
-            if 0 < self.current_map < 4:
+            if self.current_map in [1, 2, 3, 6]:
                 if section == 'PreEndRound' and not self.is_warmup:
                     for player in players:
                         if ('round_points' in player) and (player['player'].login in self.tournament_players):
@@ -505,6 +511,9 @@ class ApexEvents(AppConfig):
 
                     positions = sorted(self.tournament_players, key=self.tournament_players.get, reverse=True)
                     self.tournament_pos = {rank: key for rank, key in enumerate(positions, 1)}
+
+                    if self.current_map == 6:
+                        self.current_run += 1
 
             elif self.current_map > 3:
                 if section == 'EndMap':
