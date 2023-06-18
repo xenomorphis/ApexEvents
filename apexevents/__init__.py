@@ -343,87 +343,43 @@ class ApexEvents(AppConfig):
             if self.current_map < 1:
                 time.sleep(5)
                 await self.instance.chat('$s$1EFAuto$FFFModerator: Get ready for... $16FTH$18FE S$1AFU$1BFM$1CFM$1DFI$1EFT')
-            elif self.current_map < 3:
-                time.sleep(5)
+            elif self.current_map < 7:
                 players_current = len(self.tournament_pos)
 
-                if players_current > 17:
-                    player_ref = self.tournament_pos[14]
-                    points_ref = self.tournament_players[player_ref]
-                    position_ref = 14
-                else:
-                    player_ref = self.tournament_pos[12]
-                    points_ref = self.tournament_players[player_ref]
-                    position_ref = 12
+                if self.current_map < 4:
+                    dnq_message = '$s$1EFPRELIMINARIES | '
 
-                for player in self.tournament_players:
-                    if players_current > position_ref:
-                        diff_to_q = self.tournament_players[player] - points_ref
-
-                        if diff_to_q > 0:
-                            colorcode = '$3C0+'
-                        else:
-                            colorcode = '$F30'
-
-                        await self.instance.chat('$s$1EFPRELIMINARIES | $FFFYour total points: $FE0{} $FFF(Diff to P{}: {}{}$FFF)'
-                                                 .format(str(self.tournament_players[player]), str(position_ref), colorcode, str(diff_to_q)), player)
+                    if players_current > 17:
+                        player_ref = self.tournament_pos[14]
+                        qualified = 14
                     else:
-                        player_pos = list(self.tournament_pos.keys())[list(self.tournament_pos.values()).index(player)]
-                        await self.instance.chat('$s$1EFPRELIMINARIES | $FFFYour total points: $FE0{} $FFF(Pos $FE0{}$FFF)'
-                                                 .format(str(self.tournament_players[player]), str(player_pos)), player)
-            elif self.current_map == 3:
-                time.sleep(2.5)
-                players_current = len(self.tournament_pos)
+                        player_ref = self.tournament_pos[12]
+                        qualified = 12
 
-                if players_current > 17:
-                    player_ref = self.tournament_pos[14]
                     points_ref = self.tournament_players[player_ref]
-                    position_ref = 14
-                else:
-                    player_ref = self.tournament_pos[12]
-                    points_ref = self.tournament_players[player_ref]
-                    position_ref = 12
+                    time.sleep(2.5)
 
-                for player in self.tournament_players:
-                    if players_current > position_ref:
-                        diff_to_q = self.tournament_players[player] - points_ref
+                    for player in self.tournament_players:
+                        if players_current > qualified:
+                            p_diff = self.tournament_players[player] - points_ref
 
-                        if diff_to_q > 0:
-                            colorcode = '$3C0+'
+                            if p_diff > 0:
+                                colorcode = '$3C0+'
+                            else:
+                                colorcode = '$F30'
+
+                            await self.instance.chat('{}$FFFYour total points: $FE0{} $FFF(Diff to P{}: {}{}$FFF)'
+                                                     .format(dnq_message, str(self.tournament_players[player]),
+                                                             str(qualified), colorcode, str(p_diff)), player)
                         else:
-                            colorcode = '$F30'
+                            player_pos = list(self.tournament_pos.keys())[list(self.tournament_pos.values()).index(player)]
+                            await self.instance.chat('{}$FFFYour total points: $FE0{} $FFF(Pos $FE0{}$FFF)'
+                                                     .format(dnq_message, str(self.tournament_players[player]), str(player_pos)), player)
 
-                        await self.instance.chat('$s$1EFPRELIMINARIES | $FFFYour total points: $FE0{} $FFF(Diff to P{}: {}{}$FFF)'
-                                                 .format(str(self.tournament_players[player]), str(position_ref), colorcode, str(diff_to_q)), player)
-                    else:
-                        player_pos = list(self.tournament_pos.keys())[list(self.tournament_pos.values()).index(player)]
-                        await self.instance.chat('$s$1EFPRELIMINARIES | $FFFYour total points: $FE0{} $FFF(Pos $FE0{}$FFF)'
-                                                 .format(str(self.tournament_players[player]), str(player_pos)), player)
+                    if self.current_map < 3:
+                        qualified = 99
 
-                time.sleep(5)
-
-                if players_current > position_ref:
-                    await self.instance.chat('$s$1EFPRELIMINARIES | $FFFDNQ\'ed players:')
-                    for i in range(players_current, position_ref, -1):
-                        player_login_out = self.tournament_pos[i]
-
-                        if self.tournament_players[player_login_out] == self.tournament_players[self.tournament_pos[position_ref]]:
-                            await self.instance.chat('$s$1EFNo further eliminations because of tied ranks. Expect more '
-                                                     'eliminations next round instead.')
-                            break
-
-                        if (player_login_out in online) and auto_dnq:
-                            await self.instance.command_manager.execute(self.admin, '//forcespec', player_login_out)
-
-                        await self.instance.chat(
-                            '$s$1EFRank {}: $FFF{}'.format(str(i), self.tournament_player_names[player_login_out]))
-                        del self.tournament_players[player_login_out]
-
-            elif 3 < self.current_map < 7:
-                time.sleep(7.5)
-                players_current = len(self.tournament_pos)
-
-                if self.current_map == 4:
+                elif self.current_map == 4:
                     dnq_message = '$s$1EFELIMINATION 1 | '
 
                     if players_current > 13:
@@ -439,7 +395,9 @@ class ApexEvents(AppConfig):
                     qualified = 6
 
                 if players_current > qualified:
+                    time.sleep(5)
                     await self.instance.chat('{}$FFFDNQ\'ed players:'.format(dnq_message))
+
                     for i in range(players_current, qualified, -1):
                         dnq_player = self.tournament_pos[i]
 
@@ -450,9 +408,10 @@ class ApexEvents(AppConfig):
                         if (dnq_player in online) and auto_dnq:
                             await self.instance.command_manager.execute(self.admin, '//forcespec', dnq_player)
 
-                        await self.instance.chat(
-                            '$s$1EFRank {}: $FFF{}'.format(str(i), self.tournament_player_names[dnq_player]))
+                        await self.instance.chat('$s$1EFRank {}: $FFF{}'
+                                                 .format(str(i), self.tournament_player_names[dnq_player]))
                         del self.tournament_players[dnq_player]
+                        time.sleep(0.75)
 
     async def map_end(self, map, **kwargs):
         if self.tournament == 'level9':
