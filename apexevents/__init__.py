@@ -462,19 +462,21 @@ class ApexEvents(AppConfig):
                         rank = len(self.tournament_pos)
 
                         if self.current_run > 3 and rank > 4:
-                            online = self.instance.player_manager.online_logins
-                            auto_dnq = await self.setting_summit_autodnq_players.get_value()
-                            dnq_player = self.tournament_players[rank]
+                            dnq_player = self.tournament_pos[rank]
 
-                            await self.instance.chat('$s$1EFSEMI-FINAL | $FFFDNQ\'ed player:')
+                            if self.tournament_players[dnq_player] == self.tournament_players[self.tournament_pos[rank - 1]]:
+                                await self.instance.chat('$s$1EFNo elimination this run because of tied ranks.')
+                            else:
+                                online = self.instance.player_manager.online_logins
+                                auto_dnq = await self.setting_summit_autodnq_players.get_value()
+                                await self.instance.chat('$s$1EFSEMI-FINAL | $FFFDNQ\'ed player:')
 
-                            if (dnq_player in online) and auto_dnq:
-                                await self.instance.command_manager.execute(self.admin, '//forcespec', dnq_player)
+                                if (dnq_player in online) and auto_dnq:
+                                    await self.instance.command_manager.execute(self.admin, '//forcespec', dnq_player)
 
-                            await self.instance.chat(
-                                '$s$1EFRank {}: $FFF{}'.format(str(rank), self.tournament_player_names[dnq_player]))
-
-                            del self.tournament_players[rank]
+                                await self.instance.chat(
+                                    '$s$1EFRank {}: $FFF{}'.format(str(rank), self.tournament_player_names[dnq_player]))
+                                del self.tournament_players[dnq_player]
 
                         self.current_run += 1
 
