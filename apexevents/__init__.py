@@ -396,6 +396,10 @@ class ApexEvents(AppConfig):
                     dnq_message = '$s$1EFSEMI-FINAL | '
                     qualified = 6
 
+                    if players_current > qualified:
+                        while self.tournament_players[self.tournament_pos[qualified + 1]] == self.tournament_players[self.tournament_pos[qualified]]:
+                            qualified -= 1
+
                 if players_current > qualified:
                     time.sleep(5)
                     await self.instance.chat('{}$FFFDNQ\'ed players:'.format(dnq_message))
