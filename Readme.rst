@@ -2,16 +2,15 @@
 ApexEvents
 ==========
 :Release: 2023-06-21
-:Version: 0.5.0
+:Version: 0.5.1
 
-ApexEvents is a plugin for `PyPlanet <https://pypla.net/en/latest/index.html>`_ and provides a management toolbox for the
-Trackmania 2 events hosted by Team APEX.
+ApexEvents is an Auto-Moderator plugin for `PyPlanet <https://pypla.net/en/latest/index.html>`_ used for managing tournaments and events in TrackMania². It keeps track of the results,
+enforces the rules and provides event-specific information to the participants like qualifying conditions or the current leaderboard.
 
 
 Basic Usage
 -----------
-ApexEvents is an Auto-Moderator plugin used for managing tournaments and events in TrackMania². It keeps track of the results,
-enforces the rules and provides event-specific information to the participants like qualifying conditions or the current leaderboard.
+ApexEvents provides the following chat commands for interacting with and controlling the plugin:
 
 **Administrative commands**
 

@@ -4,8 +4,14 @@ ApexEvents
 
 Changelog
 -----------
+``0.5.1``
+    | Update: [SUMMIT] Introduces rules to deal with ties during the semi-final
+    | Update: [SUMMIT] Simplifies AutoMod message generation on map_begin
+    | Update: [SUMMIT] Simplifies DNQ logic
+
 ``0.5.0``
     | Feature: [GENERAL] Adds tournament toolbar
+    | Update: [SUMMIT] Adds DNQ logic for SUMMIT semi-finals
     | Update: [SUMMIT] Adds a user interface used for displaying the current leaderboard during the
       SUMMIT preliminaries
     | Update: [SUMMIT] Adds a configuration option for adjusting the finish timeout
