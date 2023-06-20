@@ -293,7 +293,6 @@ class ApexEvents(AppConfig):
             elif self.current_map == 5:
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFElimination Round 2')
                 qualified = 8
-
             elif self.current_map == 6:
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFSemi-Final')
 
@@ -307,7 +306,6 @@ class ApexEvents(AppConfig):
 
             elif self.current_map == 7:
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFFinal')
-
             else:
                 self.tournament_locked = False
                 self.tournament = ''
