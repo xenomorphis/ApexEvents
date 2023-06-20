@@ -63,8 +63,7 @@ class ApexEvents(AppConfig):
             Command(command='lvl9rank', aliases=['lvl9'], target=self.level9_rank,
                     description='Shows current ranking information.'),
             Command(command='summitstart', target=self.summit_start, perms='apexevents:manage_event', admin=True,
-                    description='Starts the AutoMod-Tool for THE SUMMIT')
-            .add_param(name="mode", nargs=1, type=str, required=False, default='', help="Use 'test' for starting a SUMMIT test session."),
+                    description='Starts the AutoMod-Tool for THE SUMMIT'),
             Command(command='summitclear', target=self.summit_clear, perms='apexevents:manage_event', admin=True,
                     description='Resets the AutoMod-Tool for THE SUMMIT'),
             Command(command='summitrank', aliases=['summit'], target=self.summit_rank,
@@ -97,6 +96,7 @@ class ApexEvents(AppConfig):
             self.tournament_dnf = 0
 
             current_script = (await self.instance.mode_manager.get_current_script()).lower()
+
             if 'timeattack' in current_script:
                 self.current_map = 0
                 await self.instance.command_manager.execute(player, '//modesettings', 'S_TimeLimit', str(540))
@@ -109,11 +109,7 @@ class ApexEvents(AppConfig):
 
     async def summit_start(self, player, data, **kwargs):
         if self.tournament == '':
-            if data.mode == 'test':
-                self.tournament = 'summit_test'
-            else:
-                self.tournament = 'summit'
-
+            self.tournament = 'summit'
             self.tournament_locked = False
             self.admin = player
             self.current_run = 1
@@ -153,7 +149,7 @@ class ApexEvents(AppConfig):
             await self.instance.chat('$s$FB3Auto$FFFModerator: Tournament successfully cleared!', player)
 
     async def summit_clear(self, player, data, **kwargs):
-        if self.tournament in ['summit', 'summit_test']:
+        if self.tournament == 'summit':
             self.tournament_locked = False
             self.current_map = -1
             self.current_run = 1
@@ -163,12 +159,8 @@ class ApexEvents(AppConfig):
             self.tournament_pos.clear()
 
             await self.tournament_widget.hide()
-
-            if self.tournament == 'summit':
-                await self.instance.chat('$s$FB3Auto$FFFModerator: Tournament successfully cleared!', player)
-                await self.instance.command_manager.execute(self.admin, '//srvpass')
-            else:
-                await self.instance.chat('$s$FB3Auto$FFFModerator: SUMMIT test mode deactivated!', player)
+            await self.instance.chat('$s$FB3Auto$FFFModerator: Tournament successfully cleared!', player)
+            await self.instance.command_manager.execute(self.admin, '//srvpass')
 
             self.admin = None
             self.tournament = ''
@@ -183,7 +175,7 @@ class ApexEvents(AppConfig):
                 player)
 
     async def summit_rank(self, player, data, **kwargs):
-        if (self.tournament_locked and self.tournament == 'summit' and self.current_map < 4) or self.tournament == 'summit_test':
+        if self.tournament_locked and self.tournament == 'summit' and self.current_map < 4:
             view = SummitListView(self, player.login)
             await view.display(player.login)
         elif self.tournament == 'summit' and self.current_map == 1 and not self.tournament_locked:
@@ -208,7 +200,7 @@ class ApexEvents(AppConfig):
                                      .format(url_block), player)
 
     async def apexevents_info(self, player, data, **kwargs):
-        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.5.1-0', player)
+        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.5.1-1', player)
 
         if self.tournament == 'level9' or self.current_map == 10:
             await self.instance.chat('$s$1EF/lvl9$FFF: $iGet the current leaderboard (updated after each map).', player)
@@ -219,13 +211,10 @@ class ApexEvents(AppConfig):
             if self.tournament == '':
                 await self.instance.chat('$s$1EF//lvl9start$FFF: $iSetup a new AutoModerator for a LEVEL9 event.', player)
                 await self.instance.chat('$s$1EF//summitstart$FFF: $iSetup a new AutoModerator for THE SUMMIT.', player)
-
-                if player.level > 2:
-                    await self.instance.chat(
-                        '$s$1EF//summitstart test$FFF: $iSetup the AutoModerator in SUMMIT test mode.', player)
-
-            await self.instance.chat('$s$1EF//lvl9clear$FFF: $iClear an ongoing LEVEL9 event.', player)
-            await self.instance.chat('$s$1EF//summitclear$FFF: $iClear an ongoing SUMMIT event.', player)
+            elif self.tournament == 'level9':
+                await self.instance.chat('$s$1EF//lvl9clear$FFF: $iClear an ongoing LEVEL9 event.', player)
+            elif self.tournament == 'summit':
+                await self.instance.chat('$s$1EF//summitclear$FFF: $iClear an ongoing SUMMIT event.', player)
 
     async def map_begin(self, map, **kwargs):
         current_players = self.instance.player_manager.count_players
@@ -327,9 +316,6 @@ class ApexEvents(AppConfig):
             if qualified > 0:
                 await self.instance.chat('$s$1EFQualification condition: $FFFBe upon the Top {} players{}.'
                                          .format(str(qualified), message_condition))
-
-        elif self.tournament == 'summit_test':
-            self.current_map += 1
 
     async def podium_start(self, *args, **kwargs):
         if self.tournament == 'level9':
@@ -493,27 +479,16 @@ class ApexEvents(AppConfig):
                     positions = sorted(self.tournament_players, key=self.tournament_players.get, reverse=True)
                     self.tournament_pos = {rank: key for rank, key in enumerate(positions, 1)}
 
-        if self.tournament == 'summit_test' and self.current_map > 0:
-            if section == 'PreEndRound' and not self.is_warmup:
-                for player in players:
-                    if ('round_points' in player) and (player['player'].login in self.tournament_players):
-                        self.tournament_players[player['player'].login] += player['round_points']
-
-                positions = sorted(self.tournament_players, key=self.tournament_players.get, reverse=True)
-                self.tournament_pos = {rank: key for rank, key in enumerate(positions, 1)}
-                await self.debug(self.admin, '')
-
     async def warmup_start(self):
         self.is_warmup = True
 
     async def warmup_end(self):
         self.is_warmup = False
 
-        if self.tournament in ['summit', 'summit_test'] and self.current_map == 1 and not self.tournament_locked:
+        if self.tournament == 'summit' and self.current_map == 1 and not self.tournament_locked:
             self.tournament_locked = True
 
-            if self.tournament == 'summit':
-                await self.instance.command_manager.execute(self.admin, '//srvpass', 'awas')
+            await self.instance.command_manager.execute(self.admin, '//srvpass', 'awas')
 
             self.tournament_players_amt = self.instance.player_manager.count_players
             participants = self.instance.player_manager.online_logins
