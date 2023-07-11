@@ -200,7 +200,7 @@ class ApexEvents(AppConfig):
                                      .format(url_block), player)
 
     async def apexevents_info(self, player, data, **kwargs):
-        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.5.1-1', player)
+        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.5.1-2', player)
 
         if self.tournament == 'level9' or self.current_map == 10:
             await self.instance.chat('$s$1EF/lvl9$FFF: $iGet the current leaderboard (updated after each map).', player)
@@ -407,6 +407,9 @@ class ApexEvents(AppConfig):
         if self.tournament == 'level9':
             if self.current_map > 0:
                 for player in self.map_times:
+                    if self.map_times[player] == 0 and player not in self.finished_maps:
+                        continue
+
                     if self.map_times[player] == 0:
                         self.map_times[player] = map.time_author + 15000
                     else:
