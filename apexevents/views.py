@@ -84,38 +84,24 @@ class Lvl9ListView(ManualListView):
         for pos in range(1, len(self.app.tournament_pos) + 1):
             player = self.app.tournament_pos[pos]
             player_finished = self.app.finished_maps[player]
-            player_time = self.app.tournament_times[player]
+            raw_time = self.app.tournament_times[player]
+            color_code = ''
 
-            if pos == 1:
-                if len(times.format_time(player_time)) < 9:
-                    player_time = '0' + times.format_time(player_time)
-                else:
-                    player_time = times.format_time(player_time)
-
-                if player == self.viewer:
-                    items.append({'pos': '$FB1' + str(pos),
-                                  'player_name': player,
-                                  'total_time': '$FB1' + player_time,
-                                  'maps_finished': '$FB1' + str(player_finished) + '/' + str(self.app.current_map - 1)})
-                else:
-                    items.append({'pos': pos,
-                                  'player_name': player,
-                                  'total_time': player_time,
-                                  'maps_finished': str(player_finished) + '/' + str(self.app.current_map - 1)})
-
+            if pos == 1 and len(times.format_time(raw_time)) < 9:
+                player_time = '0' + times.format_time(raw_time)
+            elif pos == 1 and len(times.format_time(raw_time)) > 8:
+                player_time = times.format_time(raw_time)
             else:
-                rel_time = player_time - self.app.tournament_times[self.app.tournament_pos[1]]
+                rel_time = raw_time - self.app.tournament_times[self.app.tournament_pos[1]]
+                player_time = '+' + times.format_time(rel_time)
 
-                if player == self.viewer:
-                    items.append({'pos': '$FB1' + str(pos),
-                                  'player_name': player,
-                                  'total_time': '$FB1+' + times.format_time(rel_time),
-                                  'maps_finished': '$FB1' + str(player_finished) + '/' + str(self.app.current_map - 1)})
-                else:
-                    items.append({'pos': pos,
-                                  'player_name': player,
-                                  'total_time': '+' + times.format_time(rel_time),
-                                  'maps_finished': str(player_finished) + '/' + str(self.app.current_map - 1)})
+            if player == self.viewer:
+                color_code = '$FB1'
+
+            items.append({'pos': color_code + str(pos),
+                          'player_name': player,
+                          'total_time': color_code + player_time,
+                          'maps_finished': color_code + str(player_finished) + '/' + str(self.app.current_map - 1)})
 
         return items
 
