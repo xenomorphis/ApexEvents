@@ -161,25 +161,16 @@ class SummitListView(ManualListView):
         for pos in range(1, len(self.app.tournament_pos) + 1):
             player_login = self.app.tournament_pos[pos]
             player_points = self.app.tournament_players[player_login]
+            color_code = ''
 
-            if pos < q_limit:
-                if player_login == self.viewer:
-                    items.append({'pos': '$1EF' + str(pos),
-                                  'player_name': self.app.tournament_player_names[player_login],
-                                  'points': '$1EF' + str(player_points)})
-                else:
-                    items.append({'pos': pos,
-                                  'player_name': self.app.tournament_player_names[player_login],
-                                  'points': str(player_points)})
+            if pos >= q_limit:
+                color_code = '$D00'
 
-            else:
-                if player_login == self.viewer:
-                    items.append({'pos': '$1EF' + str(pos),
-                                  'player_name': self.app.tournament_player_names[player_login],
-                                  'points': '$1EF' + str(player_points)})
-                else:
-                    items.append({'pos': '$D00' + str(pos),
-                                  'player_name': self.app.tournament_player_names[player_login],
-                                  'points': '$D00' + str(player_points)})
+            if player_login == self.viewer:
+                color_code = '$1EF'
+
+            items.append({'pos': color_code + str(pos),
+                          'player_name': self.app.tournament_player_names[player_login],
+                          'points': color_code + str(player_points)})
 
         return items
