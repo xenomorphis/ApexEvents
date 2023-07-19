@@ -75,6 +75,7 @@ class ApexEvents(AppConfig):
         )
 
         self.context.signals.listen(mp_signals.map.map_begin, self.map_begin)
+        self.context.signals.listen(mp_signals.player.player_connect, self.player_connect)
         self.context.signals.listen(mp_signals.flow.podium_start, self.podium_start)
         self.context.signals.listen(mp_signals.map.map_end, self.map_end)
         self.context.signals.listen(tm_signals.finish, self.player_finish)
@@ -200,7 +201,7 @@ class ApexEvents(AppConfig):
                                      .format(url_block), player)
 
     async def apexevents_info(self, player, data, **kwargs):
-        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.5.1-3', player)
+        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.5.1-4', player)
 
         if self.tournament == 'level9' or self.current_map == 10:
             await self.instance.chat('$s$1EF/lvl9$FFF: $iGet the current leaderboard (updated after each map).', player)
@@ -314,6 +315,10 @@ class ApexEvents(AppConfig):
             if qualified > 0:
                 await self.instance.chat('$s$1EFQualification condition: $FFFBe upon the Top {} players{}.'
                                          .format(str(qualified), message_condition))
+
+    async def player_connect(self, player, is_spectator, source, signal):
+        if self.tournament == 'level9' and self.current_map > 1:
+            await self.tournament_widget.display(player=player)
 
     async def podium_start(self, *args, **kwargs):
         if self.tournament == 'level9':
