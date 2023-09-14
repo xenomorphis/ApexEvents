@@ -8,6 +8,8 @@ Changelog
     | Update: [SUMMIT] Introduces rules to deal with ties during the semi-final
     | Update: [SUMMIT] Simplifies AutoMod message generation on map_begin
     | Update: [SUMMIT] Simplifies DNQ logic
+    | Update: [LEVEL9] Simplifies leaderboard generation
+    | Fix: [LEVEL9] Stops idle players from being included in the leaderboard
 
 ``0.5.0``
     | Feature: [GENERAL] Adds tournament toolbar
