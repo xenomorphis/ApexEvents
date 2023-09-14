@@ -1,17 +1,16 @@
 ==========
 ApexEvents
 ==========
-:Release: 2022-10-16
-:Version: 0.4.2
+:Release: 2023-06-21
+:Version: 0.5.1
 
-ApexEvents is a plugin for `PyPlanet <https://pypla.net/en/latest/index.html>`_ and provides a management toolbox for the
-Trackmania 2 events hosted by Team APEX.
+ApexEvents is an Auto-Moderator plugin for `PyPlanet <https://pypla.net/en/latest/index.html>`_ used for managing tournaments and events in TrackMania². It keeps track of the results,
+enforces the rules and provides event-specific information to the participants like qualifying conditions or the current leaderboard.
 
 
 Basic Usage
 -----------
-ApexEvents is currently a command-line tool using the ingame chat as it's CLI. As it is mainly an administrative tool used
-internally for our events there's no user interface planned or necessary.
+ApexEvents provides the following chat commands for interacting with and controlling the plugin:
 
 **Administrative commands**
 
@@ -45,7 +44,12 @@ internally for our events there's no user interface planned or necessary.
 
 ``/lvl9rank``
     | *No permissions needed*
-    | Writes extended ranking information of the user into his personal chat.
+    | Displays the current tournament leaderboard. Only available during a LEVEL9 event.
+
+``/summitrank``
+    | *No permissions needed*
+    | Displays the current tournament leaderboard. Only available during the preliminary rounds of
+      SUMMIT events.
 
 ``/rulebook``
     | *No permissions needed*
@@ -53,4 +57,4 @@ internally for our events there's no user interface planned or necessary.
 
 ``/apexevents``
     | *No permissions needed*
-    | Writes the version number and all available commands into the ingame chat.
+    | Writes the version number and all currently available commands into the ingame chat.
