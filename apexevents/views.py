@@ -159,9 +159,13 @@ class SummitPreliminaryListView(ManualListView):
             q_limit = 13
 
         for pos in range(1, len(self.app.tournament_pos) + 1):
-            player_login = self.app.tournament_pos[pos]
-            player_points = self.app.tournament_players[player_login]
             color_code = ''
+            player_login = self.app.tournament_pos[pos]
+
+            try:
+                player_points = self.app.tournament_players[player_login]
+            except KeyError:
+                player_points = 0
 
             if pos >= q_limit:
                 color_code = '$D00'
