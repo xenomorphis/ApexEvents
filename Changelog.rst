@@ -4,6 +4,13 @@ ApexEvents
 
 Changelog
 -----------
+``1.0.0-rc1``
+    | Feature: [SUMMIT] Introduces a new ListView showing the overall tournament ranking
+    | Update: [SUMMIT] Renames ``SummitListView`` class to ``SummitPreliminaryListView``
+    | Update: [SUMMIT] Adds a new chat message displayed after every run in the Semi-Final with information
+      about the current gap between the player and the elimination slot
+    | Fix: [SUMMIT] Assigns a value of ``0`` points to any player without a current score
+
 ``0.5.1``
     | Update: [SUMMIT] Introduces rules to deal with ties during the semi-final
     | Update: [SUMMIT] Simplifies AutoMod message generation on map_begin
