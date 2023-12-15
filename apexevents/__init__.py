@@ -3,7 +3,7 @@ from datetime import date
 import time
 
 from pyplanet.apps.config import AppConfig
-from .views import EventToolbarView, Lvl9ListView, SummitListView
+from .views import EventToolbarView, Lvl9ListView, SummitPreliminaryListView
 from pyplanet.contrib.command import Command
 from pyplanet.contrib.setting import Setting
 from pyplanet.utils import times
@@ -178,7 +178,7 @@ class ApexEvents(AppConfig):
 
     async def summit_rank(self, player, data, **kwargs):
         if self.tournament_locked and self.tournament == 'summit' and self.current_map < 4:
-            view = SummitListView(self, player.login)
+            view = SummitPreliminaryListView(self, player.login)
             await view.display(player.login)
         elif self.tournament == 'summit' and self.current_map == 1 and not self.tournament_locked:
             await self.instance.chat(

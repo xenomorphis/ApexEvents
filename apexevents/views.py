@@ -106,7 +106,7 @@ class Lvl9ListView(ManualListView):
         return items
 
 
-class SummitListView(ManualListView):
+class SummitPreliminaryListView(ManualListView):
     app = None
     title = 'SUMMIT – Preliminary Round'
     icon_style = 'Icons128x128_1'
