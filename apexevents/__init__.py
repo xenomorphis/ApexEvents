@@ -473,6 +473,32 @@ class ApexEvents(AppConfig):
                                 await self.instance.chat(
                                     '$s$1EFRank {}: $FFF{}'.format(str(rank), self.tournament_player_names[dnq_player]))
                                 del self.tournament_players[dnq_player]
+                                rank -= 1
+
+                        if rank > 4:
+                            last_player = self.tournament_pos[rank]
+                            lowest_points = self.tournament_players[last_player]
+                            ties = 0
+
+                            for score in self.tournament_players.values():
+                                if score == lowest_points:
+                                    ties += 1
+
+                            last_qualified = self.tournament_pos[rank - ties]
+
+                            for player in self.tournament_players:
+                                if self.tournament_players[player] > lowest_points:
+                                    points_diff = self.tournament_players[player] - self.tournament_players[last_player]
+
+                                    await self.instance.chat(
+                                        '$s$1EFSEMI-FINAL | $FFFCurrent gap to elimination rank: $3C0+{} ({})$FFF)'
+                                        .format(str(points_diff), self.tournament_player_names[last_player]), player)
+                                else:
+                                    points_diff = self.tournament_players[player] - self.tournament_players[last_qualified]
+
+                                    await self.instance.chat(
+                                        '$s$1EFSEMI-FINAL | $FFFYou\'re on the elimination spot! Gap to next rank: $F30{} ({})$FFF)'
+                                        .format(str(points_diff), self.tournament_player_names[last_qualified]), player)
 
                         self.current_run += 1
 
