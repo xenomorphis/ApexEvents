@@ -174,3 +174,64 @@ class SummitPreliminaryListView(ManualListView):
                           'points': color_code + str(player_points)})
 
         return items
+
+
+class SummitTournamentListView(ManualListView):
+    app = None
+    title = 'SUMMIT – Overall Ranking'
+    icon_style = 'Icons128x128_1'
+    icon_substyle = 'Statistics'
+    viewer = None
+
+    data = []
+
+    def __init__(self, app, viewer):
+        super().__init__(self)
+        self.app = app
+        self.manager = app.context.ui
+        self.player_manager = app.instance.player_manager
+        self.viewer = viewer
+
+    async def get_fields(self):
+        return [
+            {
+                'name': 'Rank',
+                'index': 'pos',
+                'sorting': True,
+                'searching': False,
+                'width': 15,
+                'type': 'label'
+            },
+            {
+                'name': 'Player',
+                'index': 'player_name',
+                'sorting': False,
+                'searching': True,
+                'width': 100,
+                'type': 'label'
+            },
+            {
+                'name': 'Eliminated in',
+                'index': 'eliminated',
+                'sorting': True,
+                'searching': False,
+                'width': 30,
+                'type': 'label'
+            },
+        ]
+
+    async def get_data(self):
+        items = []
+
+        for rank in sorted(self.app.tournament_summit.keys()):
+            player_data = self.app.tournament_summit[rank].split('%-%')
+            color_code = ''
+
+            if player_data[0] == self.viewer:
+                color_code = '$1EF'
+
+            items.append({'pos': color_code + str(rank),
+                          'player_name': player_data[1],
+                          'eliminated': color_code + player_data[2]})
+
+        return items

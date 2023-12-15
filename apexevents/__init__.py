@@ -35,6 +35,7 @@ class ApexEvents(AppConfig):
         self.tournament_players = dict()
         self.tournament_players_amt = 0
         self.tournament_pos = dict()
+        self.tournament_summit = dict()
         self.tournament_times = dict()
         self.tournament_dnf = 0
         self.version = 'v$FF01.0.0-rc1'
@@ -119,6 +120,7 @@ class ApexEvents(AppConfig):
             self.tournament_player_names.clear()
             self.tournament_players.clear()
             self.tournament_pos.clear()
+            self.tournament_summit.clear()
 
             current_script = (await self.instance.mode_manager.get_current_script()).lower()
             timeout = await self.setting_summit_finish_timeout.get_value()
@@ -159,6 +161,7 @@ class ApexEvents(AppConfig):
             self.tournament_player_names.clear()
             self.tournament_players.clear()
             self.tournament_pos.clear()
+            self.tournament_summit.clear()
 
             await self.tournament_widget.hide()
             await self.instance.chat('$s$FB3Auto$FFFModerator: Tournament successfully cleared!', player)
@@ -406,6 +409,7 @@ class ApexEvents(AppConfig):
 
                         await self.instance.chat('$s$1EFRank {}: $FFF{}'
                                                  .format(str(i), self.tournament_player_names[dnq_player]))
+                        self.tournament_summit[i] = '{}%-%{}%-%{}'.format(dnq_player, self.tournament_player_names[dnq_player], dnq_message[6:-3])
                         del self.tournament_players[dnq_player]
                         time.sleep(0.75)
 
