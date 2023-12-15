@@ -37,6 +37,7 @@ class ApexEvents(AppConfig):
         self.tournament_pos = dict()
         self.tournament_times = dict()
         self.tournament_dnf = 0
+        self.version = 'v$FF01.0.0-rc1'
 
         self.tournament_widget = EventToolbarView(self)
 
@@ -84,7 +85,7 @@ class ApexEvents(AppConfig):
         self.context.signals.listen(tm_signals.warmup_start, self.warmup_start)
 
         await self.context.setting.register(self.setting_summit_autodnq_players, self.setting_summit_finish_timeout)
-        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Management System v$FF00.5.0 online')
+        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Management System {} $FB3online'.format(self.version))
 
     async def level9_start(self, player, data, **kwargs):
         if self.tournament == '':
@@ -201,7 +202,7 @@ class ApexEvents(AppConfig):
                                      .format(url_block), player)
 
     async def apexevents_info(self, player, data, **kwargs):
-        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Managing System v$FF00.5.1-4', player)
+        await self.instance.chat('$s$FFF//$FB3apex$FFFEVENTS Management System {}'.format(self.version), player)
 
         if self.tournament == 'level9' or self.current_map == 10:
             await self.instance.chat('$s$1EF/lvl9$FFF: $iGet the current leaderboard (updated after each map).', player)
