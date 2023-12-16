@@ -253,8 +253,8 @@ class ApexEvents(AppConfig):
                         await self.instance.chat('$s$FFF Your current rank: $1EF{}. {}  $1EF{}'
                                                  .format(player_pos, player.nickname, player_total), player)
             elif self.current_map == 10:
-                await self.instance.chat('$s$FFFThe tournament has concluded. You can view the final results via the '
-                                         'command $FB1/lvl9$FFF. Thx for playing and see \'ya next time!')
+                await self.instance.chat('$s$FFFThe tournament has concluded. Click on the cup icon on the left '
+                                         'to view the final results. Thx for playing and see \'ya next time!')
                 self.tournament = 'level9-ended'
 
         elif self.tournament == 'summit':
@@ -310,6 +310,8 @@ class ApexEvents(AppConfig):
                 self.tournament_locked = False
                 self.tournament = 'summit-ended'
                 await self.instance.command_manager.execute(self.admin, '//srvpass')
+                await self.instance.chat('$s$FFFThe tournament has concluded. Click on the cup icon on the left '
+                                         'to view the final results. Thx for playing and see \'ya next time!')
 
             if qualified > 0:
                 await self.instance.chat('$s$1EFQualification condition: $FFFBe upon the Top {} players{}.'
