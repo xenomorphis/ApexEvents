@@ -3,7 +3,7 @@ from datetime import date
 import time
 
 from pyplanet.apps.config import AppConfig
-from .views import EventToolbarView, Lvl9ListView, SummitPreliminaryListView
+from .views import EventToolbarView, Lvl9ListView, SummitPreliminaryListView, SummitTournamentListView
 from pyplanet.contrib.command import Command
 from pyplanet.contrib.setting import Setting
 from pyplanet.utils import times
@@ -38,7 +38,7 @@ class ApexEvents(AppConfig):
         self.tournament_summit = dict()
         self.tournament_times = dict()
         self.tournament_dnf = 0
-        self.version = 'v$FF01.0.0-rc1'
+        self.version = 'v$FF01.0.0-rc2'
 
         self.tournament_widget = EventToolbarView(self)
 
@@ -186,9 +186,9 @@ class ApexEvents(AppConfig):
         elif self.tournament == 'summit' and self.current_map == 1 and not self.tournament_locked:
             await self.instance.chat(
                 '$s$1EFAuto$FFFModerator: We don\'t have a tournament leaderboard yet. Wait until the warmup has ended.', player)
-        elif self.tournament == 'summit' and self.current_map > 3:
-            await self.instance.chat(
-                '$s$1EFAuto$FFFModerator: This command is only available during the Preliminary Round.', player)
+        elif self.tournament in ['summit', 'summit-ended'] and self.current_map > 3:
+            view = SummitTournamentListView(self, player.login)
+            await view.display(player.login)
 
     async def rules(self, player, data, **kwargs):
         url_block = ''
@@ -257,10 +257,6 @@ class ApexEvents(AppConfig):
                                          'command $FB1/lvl9$FFF. Thx for playing and see \'ya next time!')
                 self.tournament = 'level9-ended'
 
-        elif self.tournament == 'level9-ended':
-            await self.tournament_widget.hide()
-            self.tournament = ''
-
         elif self.tournament == 'summit':
             self.current_map += 1
             qualified = 0
@@ -287,7 +283,6 @@ class ApexEvents(AppConfig):
                     qualified = 12
 
             elif self.current_map == 4:
-                await self.tournament_widget.hide()
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFElimination Round 1')
 
                 if current_players > 13:
@@ -313,12 +308,16 @@ class ApexEvents(AppConfig):
                 await self.instance.chat('$s$1EFTHE SUMMIT: $FFFFinal')
             else:
                 self.tournament_locked = False
-                self.tournament = ''
+                self.tournament = 'summit-ended'
                 await self.instance.command_manager.execute(self.admin, '//srvpass')
 
             if qualified > 0:
                 await self.instance.chat('$s$1EFQualification condition: $FFFBe upon the Top {} players{}.'
                                          .format(str(qualified), message_condition))
+
+        elif self.tournament in ['level9-ended', 'summit-ended']:
+            await self.tournament_widget.hide()
+            self.tournament = ''
 
     async def player_connect(self, player, is_spectator, source, signal):
         if self.tournament == 'level9' and self.current_map > 1:
