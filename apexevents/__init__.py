@@ -38,7 +38,7 @@ class ApexEvents(AppConfig):
         self.tournament_summit = dict()
         self.tournament_times = dict()
         self.tournament_dnf = 0
-        self.version = 'v$FF01.0.0-rc2'
+        self.version = 'v$FF01.0.0-rc3'
 
         self.tournament_widget = EventToolbarView(self)
 
@@ -414,6 +414,11 @@ class ApexEvents(AppConfig):
                         del self.tournament_players[dnq_player]
                         time.sleep(0.75)
 
+            elif self.current_map == 7:
+                for i in range(len(self.tournament_pos), 0, -1):
+                    player = self.tournament_pos[i]
+                    self.tournament_summit[i] = '{}%-%{}%-%{}'.format(player, self.tournament_player_names[player], '$s$1EFFINAL')
+
     async def map_end(self, map, **kwargs):
         if self.tournament == 'level9':
             if self.current_map > 0:
@@ -478,6 +483,7 @@ class ApexEvents(AppConfig):
 
                                 await self.instance.chat(
                                     '$s$1EFRank {}: $FFF{}'.format(str(rank), self.tournament_player_names[dnq_player]))
+                                self.tournament_summit[rank] = '{}%-%{}%-%{}'.format(dnq_player, self.tournament_player_names[dnq_player], '$s$1EFSEMI-FINAL')
                                 del self.tournament_players[dnq_player]
                                 rank -= 1
 
