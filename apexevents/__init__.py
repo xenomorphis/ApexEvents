@@ -38,7 +38,7 @@ class ApexEvents(AppConfig):
         self.tournament_summit = dict()
         self.tournament_times = dict()
         self.tournament_dnf = 0
-        self.version = 'v$FF01.0.0-rc3'
+        self.version = 'v$FF01.0.0-rc4'
 
         self.tournament_widget = EventToolbarView(self)
 
@@ -95,6 +95,7 @@ class ApexEvents(AppConfig):
             self.admin = player
             self.map_times.clear()
             self.finished_maps.clear()
+            self.tournament_player_names.clear()
             self.tournament_times.clear()
             self.tournament_dnf = 0
 
@@ -146,6 +147,7 @@ class ApexEvents(AppConfig):
             self.current_map = -1
             self.map_times.clear()
             self.finished_maps.clear()
+            self.tournament_player_names.clear()
             self.tournament_times.clear()
             self.tournament_dnf = 0
 
@@ -172,7 +174,7 @@ class ApexEvents(AppConfig):
 
     async def level9_rank(self, player, data, **kwargs):
         if ('level9' in self.tournament and len(self.tournament_times) > 0) or self.current_map == 10:
-            view = Lvl9ListView(self, player.nickname)
+            view = Lvl9ListView(self, player.login)
             await view.display(player.login)
         elif 'level9' in self.tournament and len(self.tournament_times) == 0:
             await self.instance.chat(
@@ -244,14 +246,17 @@ class ApexEvents(AppConfig):
                 all_online = self.instance.player_manager.online
 
                 for player in all_online:
-                    self.map_times[player.nickname] = 0
+                    self.map_times[player.login] = 0
 
-                    if player.nickname in self.tournament_pos.values():
-                        player_pos = list(self.tournament_pos.keys())[list(self.tournament_pos.values()).index(player.nickname)]
-                        player_total = times.format_time(self.tournament_times[player.nickname])
+                    if player.login not in self.tournament_player_names.keys():
+                        self.tournament_player_names[player.login] = player.nickname
+
+                    if player.login in self.tournament_pos.values():
+                        player_pos = list(self.tournament_pos.keys())[list(self.tournament_pos.values()).index(player.login)]
+                        player_total = times.format_time(self.tournament_times[player.login])
 
                         await self.instance.chat('$s$FFF Your current rank: $1EF{}. {}  $1EF{}'
-                                                 .format(player_pos, player.nickname, player_total), player)
+                                                 .format(player_pos, self.tournament_player_names[player.login], player_total), player)
             elif self.current_map == 10:
                 await self.instance.chat('$s$FFFThe tournament has concluded. Click on the cup icon on the left '
                                          'to view the final results. Thx for playing and see \'ya next time!')
@@ -322,8 +327,11 @@ class ApexEvents(AppConfig):
             self.tournament = ''
 
     async def player_connect(self, player, is_spectator, source, signal):
-        if self.tournament == 'level9' and self.current_map > 1:
-            await self.tournament_widget.display(player=player)
+        if self.tournament == 'level9':
+            self.tournament_player_names[player.login] = player.nickname
+
+            if self.current_map > 1:
+                await self.tournament_widget.display(player=player)
 
     async def podium_start(self, *args, **kwargs):
         if self.tournament == 'level9':
@@ -448,11 +456,11 @@ class ApexEvents(AppConfig):
     async def player_finish(self, player, race_time, lap_time, lap_cps, race_cps, flow, raw, **kwargs):
         if self.tournament == 'level9' and self.current_map > 0:
             async with self.lock:
-                if player.nickname not in self.finished_maps:
-                    self.finished_maps[player.nickname] = 0
+                if player.login not in self.finished_maps:
+                    self.finished_maps[player.login] = 0
 
-                if (player.nickname not in self.map_times) or (self.map_times[player.nickname] == 0) or (lap_time < self.map_times[player.nickname]):
-                    self.map_times[player.nickname] = lap_time
+                if (player.login not in self.map_times) or (self.map_times[player.login] == 0) or (lap_time < self.map_times[player.login]):
+                    self.map_times[player.login] = lap_time
 
     async def scores(self, section, players, **kwargs):
         if self.tournament == 'summit':

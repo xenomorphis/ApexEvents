@@ -99,7 +99,7 @@ class Lvl9ListView(ManualListView):
                 color_code = '$FB1'
 
             items.append({'pos': color_code + str(pos),
-                          'player_name': player,
+                          'player_name': self.app.tournament_player_names[player],
                           'total_time': color_code + player_time,
                           'maps_finished': color_code + str(player_finished) + '/' + str(self.app.current_map - 1)})
 
