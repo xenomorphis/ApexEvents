@@ -38,7 +38,7 @@ class ApexEvents(AppConfig):
         self.tournament_summit = dict()
         self.tournament_times = dict()
         self.tournament_dnf = 0
-        self.version = 'v$FF01.0.0-rc5'
+        self.version = 'v$FF01.0.0-rc6'
 
         self.tournament_widget = EventToolbarView(self)
 
@@ -330,8 +330,8 @@ class ApexEvents(AppConfig):
         if self.tournament == 'level9':
             self.tournament_player_names[player.login] = player.nickname
 
-            if self.current_map > 1:
-                await self.tournament_widget.display(player=player)
+        if self.tournament != '' and self.current_map > 1:
+            await self.tournament_widget.display(player=player)
 
     async def podium_start(self, *args, **kwargs):
         if self.tournament == 'level9':
